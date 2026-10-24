@@ -8,6 +8,8 @@
 <meta name="description" content="Waymark lets path wardens log broken stiles, gates and fallen trees on foot, and gives the ranger one work list.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/motion@13.5.1/dist/motion.js">
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600&family=Red+Hat+Text:wght@400;500&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* Hallmark · shape: Marquee Hero · genre: modern-minimal · theme: Furrow (by request) · job: sign up · draw: 4c0cc0
@@ -312,6 +314,9 @@ td.num, th.num { font-size: var(--text-sm); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {
   .js [data-reveal], .js [data-stagger] > * { opacity: 1; translate: none; transition: none; }
 }
+
+/* with Motion the springs own movement on controls; CSS keeps colour, shadow and focus */
+.motion .btn:hover, .motion .btn:active, .motion .key:hover, .motion .key:active { transform: none; }
 </style>
 </head>
 <body>
@@ -573,6 +578,7 @@ td.num, th.num { font-size: var(--text-sm); white-space: nowrap; }
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/motion@13.5.1/dist/motion.js"></script>
 <script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
 document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
 <script>
@@ -767,7 +773,7 @@ document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && 
   function drawRoute(t) {
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(base, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const total = routeLen[routeLen.length - 1], upto = total * t; const pts = [];
-    for (let i = 0; i < routePts.length; i++) { if (routeLen[i] <= upto) pts.push(routePts[i]); else { const f = (upto - routeLen[i - 1]) / (routeLen[i] - routeLen[i - 1]); pts.push([routePts[i - 1][0] + (routePts[i][0] - routePts[i - 1][0]) * f, routePts[i - 1][1] + (routePts[i][1] - routePts[i - 1][1]) * f]); break; } }
+    for (let i = 0; i < routePts.length; i++) { if (routeLen[i] <= upto || i === 0) pts.push(routePts[i]); else { const f = (upto - routeLen[i - 1]) / (routeLen[i] - routeLen[i - 1]); pts.push([routePts[i - 1][0] + (routePts[i][0] - routePts[i - 1][0]) * f, routePts[i - 1][1] + (routePts[i][1] - routePts[i - 1][1]) * f]); break; } }
     if (pts.length < 2) return;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.strokeStyle = rgba(C.accent, 0.32); ctx.lineWidth = 9; line(ctx, pts); ctx.stroke();
@@ -809,7 +815,7 @@ document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && 
     drawBase(); setupLoupe();
     if (!animate || reduce) { drawRoute(1); landAll(); drawn = true; return; }
     const t0 = performance.now(), dur = 1800;
-    const frame = (now) => { const t = Math.min(1, (now - t0) / dur); drawRoute(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(frame); else drawn = true; };
+    const frame = (now) => { const t = Math.max(0, Math.min(1, (now - t0) / dur)); drawRoute(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(frame); else drawn = true; };
     requestAnimationFrame(frame);
   };
   fontsReady.then(() => {
@@ -863,18 +869,63 @@ document.querySelectorAll('form[data-endpoint]').forEach((form) => {
 });
 </script>
 <script>
-/* Reveals: each [data-reveal] and each child of [data-stagger] rises in once, when it is seen. */
+/* Motion (motion.dev) drives the movement: spring reveals and spring presses. Without the library the
+   same reveals run on CSS; under reduced motion everything is simply there. */
 (() => {
+  const M = window.Motion, root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const els = [...document.querySelectorAll('[data-reveal], [data-stagger]')];
+  const show = (el) => el.classList.add('is-in');
   els.forEach((el) => {
     if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay + 'ms');
     if (el.hasAttribute('data-stagger')) { const step = +el.dataset.stagger || 90, base = +(el.dataset.delay || 0); [...el.children].forEach((c, i) => c.style.setProperty('--delay', (base + i * step) + 'ms')); }
   });
-  const show = (el) => el.classList.add('is-in');
-  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(show); return; }
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
-  els.forEach((el) => io.observe(el));
   addEventListener('beforeprint', () => els.forEach(show));
+  if (reduce) { els.forEach(show); return; }
+  if (!M || !M.animate || !M.inView) {
+    if (!('IntersectionObserver' in window)) { els.forEach(show); return; }
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+    return;
+  }
+  root.classList.add('motion');
+  const spring = { type: 'spring', visualDuration: 0.75, bounce: 0.2 };
+  const riseOf = (el) => { const v = parseFloat(getComputedStyle(el).getPropertyValue('--rise')); return isNaN(v) ? 18 : v; };
+  const hold = (list, r, pop) => list.forEach((n) => { n.style.opacity = '0'; n.style.translate = `0 ${r}px`; if (pop) n.style.scale = '0.86'; });
+  els.forEach((el) => {
+    let done = false;
+    M.inView(el, () => {
+      if (done) return; done = true;
+      const base = (+el.dataset.delay || 0) / 1000, r = riseOf(el);
+      if (el.hasAttribute('data-stagger')) {
+        const kids = [...el.children], pop = el.hasAttribute('data-pop');
+        hold(kids, r, pop);
+        const to = pop ? { opacity: 1, translate: '0 0', scale: 1 } : { opacity: 1, translate: '0 0' };
+        M.animate(kids, to, { ...spring, bounce: pop ? 0.42 : spring.bounce, delay: M.stagger((+el.dataset.stagger || 90) / 1000, { startDelay: base }) });
+      } else {
+        hold([el], r, false);
+        M.animate(el, { opacity: 1, translate: '0 0' }, { ...spring, delay: base });
+      }
+      show(el);
+    }, { margin: '0px 0px -10% 0px', amount: 0.08 });
+  });
+
+  /* Controls answer the hand: a spring lift on hover, a spring press. */
+  if (M.press && M.hover) {
+    const lift = { type: 'spring', stiffness: 520, damping: 24 };
+    const live = (el) => !el.closest('[aria-hidden="true"]') && !el.matches(':disabled, [aria-disabled="true"]');
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) M.hover('.btn, .key', (el) => { if (!live(el)) return; M.animate(el, { y: -2 }, lift); return () => M.animate(el, { y: 0 }, lift); });
+    M.press('.btn, .key', (el) => { if (!live(el)) return; M.animate(el, { scale: 0.96 }, { type: 'spring', stiffness: 900, damping: 32 }); return () => M.animate(el, { scale: 1 }, lift); });
+  }
+})();
+</script>
+<script>
+/* The exported sheet opens flat as it scrolls in (Motion scroll, linear, scrubbed). */
+(() => {
+  const M = window.Motion, sheet = document.getElementById('p-list');
+  if (!M || !M.scroll || !sheet || matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 40rem)').matches) return;
+  sheet.parentElement.style.perspective = '1600px'; sheet.style.transformOrigin = '50% 0%';
+  M.scroll(M.animate(sheet, { rotateX: [18, 0], scale: [0.95, 1] }, { ease: 'linear' }), { target: sheet, offset: ['start end', 'start 0.4'] });
 })();
 </script>
 </body>

@@ -8,6 +8,8 @@
 <meta name="description" content="Bramble shows the whole household which pet got which medicine, when, and from whom.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/motion@13.5.1/dist/motion.js">
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@700&family=Instrument+Sans:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* Hallmark · shape: Workbench · genre: modern-minimal · theme: Dose (by request) · job: try · draw: 22bff2
@@ -231,6 +233,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (prefers-reduced-motion: reduce) {
   .js [data-reveal], .js [data-stagger] > * { opacity: 1; translate: none; transition: none; }
 }
+
+/* with Motion the springs own movement on controls; CSS keeps colour, shadow and focus */
+.motion .btn:hover, .motion .btn:active, .motion .key:hover, .motion .key:active { transform: none; }
 </style>
 </head>
 <body>
@@ -268,7 +273,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         <p class="hero__note">Free for one pet and up to six people.</p>
       </div>
       <figure class="ba plastic" data-slot="hero" data-kind="product" data-alt="The family chat beside the same dose as a Bramble label">
-        <div class="chat" data-stagger="480" data-delay="500" aria-label="Before: the family chat">
+        <div class="chat" data-stagger="480" data-delay="500" data-pop aria-label="Before: the family chat">
           <p class="chat__title">Family, 20:12</p>
           <p class="bubble"><b>Mum</b>Did someone give Biscuit his tablet?</p>
           <p class="bubble"><b>Sam</b>Not me</p>
@@ -428,6 +433,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/motion@13.5.1/dist/motion.js"></script>
 <script>
 /* The week fills in order, Monday morning first. */
 document.querySelectorAll('.tray .cell.is-given').forEach((c, i) => c.style.setProperty('--cd', (350 + i * 130) + 'ms'));
@@ -447,9 +453,14 @@ document.querySelectorAll('.tray .cell.is-given').forEach((c, i) => c.style.setP
 
 /* The stamp lands once, when the label comes into view. */
 (() => {
-  const el = document.querySelector('[data-land]');
+  const el = document.querySelector('[data-land]'), M = window.Motion;
   if (!el) return;
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('is-in'); return; }
+  if (M && M.inView) {
+    let done = false;
+    M.inView(el, () => { if (done) return; done = true; el.style.opacity = '0'; el.classList.add('is-in'); M.animate(el, { opacity: [0, 1], scale: [1.5, 1] }, { type: 'spring', visualDuration: 0.5, bounce: 0.5, delay: 2.9 }); }, { amount: 0.5 });
+    return;
+  }
   const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setTimeout(() => el.classList.add('is-in'), 2900); io.disconnect(); } }, { threshold: 0.5 });
   io.observe(el);
   setTimeout(() => el.classList.add('is-in'), 6000);
@@ -466,18 +477,63 @@ document.querySelectorAll('.tray .cell.is-given').forEach((c, i) => c.style.setP
 })();
 </script>
 <script>
-/* Reveals: each [data-reveal] and each child of [data-stagger] rises in once, when it is seen. */
+/* Motion (motion.dev) drives the movement: spring reveals and spring presses. Without the library the
+   same reveals run on CSS; under reduced motion everything is simply there. */
 (() => {
+  const M = window.Motion, root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const els = [...document.querySelectorAll('[data-reveal], [data-stagger]')];
+  const show = (el) => el.classList.add('is-in');
   els.forEach((el) => {
     if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay + 'ms');
     if (el.hasAttribute('data-stagger')) { const step = +el.dataset.stagger || 90, base = +(el.dataset.delay || 0); [...el.children].forEach((c, i) => c.style.setProperty('--delay', (base + i * step) + 'ms')); }
   });
-  const show = (el) => el.classList.add('is-in');
-  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(show); return; }
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
-  els.forEach((el) => io.observe(el));
   addEventListener('beforeprint', () => els.forEach(show));
+  if (reduce) { els.forEach(show); return; }
+  if (!M || !M.animate || !M.inView) {
+    if (!('IntersectionObserver' in window)) { els.forEach(show); return; }
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+    els.forEach((el) => io.observe(el));
+    return;
+  }
+  root.classList.add('motion');
+  const spring = { type: 'spring', visualDuration: 0.75, bounce: 0.2 };
+  const riseOf = (el) => { const v = parseFloat(getComputedStyle(el).getPropertyValue('--rise')); return isNaN(v) ? 18 : v; };
+  const hold = (list, r, pop) => list.forEach((n) => { n.style.opacity = '0'; n.style.translate = `0 ${r}px`; if (pop) n.style.scale = '0.86'; });
+  els.forEach((el) => {
+    let done = false;
+    M.inView(el, () => {
+      if (done) return; done = true;
+      const base = (+el.dataset.delay || 0) / 1000, r = riseOf(el);
+      if (el.hasAttribute('data-stagger')) {
+        const kids = [...el.children], pop = el.hasAttribute('data-pop');
+        hold(kids, r, pop);
+        const to = pop ? { opacity: 1, translate: '0 0', scale: 1 } : { opacity: 1, translate: '0 0' };
+        M.animate(kids, to, { ...spring, bounce: pop ? 0.42 : spring.bounce, delay: M.stagger((+el.dataset.stagger || 90) / 1000, { startDelay: base }) });
+      } else {
+        hold([el], r, false);
+        M.animate(el, { opacity: 1, translate: '0 0' }, { ...spring, delay: base });
+      }
+      show(el);
+    }, { margin: '0px 0px -10% 0px', amount: 0.08 });
+  });
+
+  /* Controls answer the hand: a spring lift on hover, a spring press. */
+  if (M.press && M.hover) {
+    const lift = { type: 'spring', stiffness: 520, damping: 24 };
+    const live = (el) => !el.closest('[aria-hidden="true"]') && !el.matches(':disabled, [aria-disabled="true"]');
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) M.hover('.btn, .key', (el) => { if (!live(el)) return; M.animate(el, { y: -2 }, lift); return () => M.animate(el, { y: 0 }, lift); });
+    M.press('.btn, .key', (el) => { if (!live(el)) return; M.animate(el, { scale: 0.96 }, { type: 'spring', stiffness: 900, damping: 32 }); return () => M.animate(el, { scale: 1 }, lift); });
+  }
+})();
+</script>
+<script>
+/* The week's tray tilts flat as it scrolls in, like a lid set down on the table (Motion scroll). */
+(() => {
+  const M = window.Motion, tray = document.querySelector('.tray');
+  if (!M || !M.scroll || !tray || matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(min-width: 60rem)').matches) return;
+  tray.parentElement.style.perspective = '1400px'; tray.style.transformOrigin = '50% 100%';
+  M.scroll(M.animate(tray, { rotateX: [26, 0], scale: [0.94, 1] }, { ease: 'linear' }), { target: tray, offset: ['start end', 'center 0.6'] });
 })();
 </script>
 

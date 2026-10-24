@@ -22,9 +22,11 @@ Then visit `http://localhost:8000/waymark/` (or any other folder name).
 
 ## How they are built
 
-- Plain HTML, CSS and JavaScript in one file per page, no build step and no libraries.
+- Plain HTML, CSS and JavaScript in one file per page, no build step.
+- Animation uses [Motion](https://motion.dev) 13.5.1, loaded from jsDelivr: spring reveals as sections scroll in, spring presses on buttons, and one scroll-linked moment per page (Waymark's work sheet opens flat, Frank's letter slides into its envelope, Lapse's clock runs with the scroll, Bramble's tray tilts flat, Settle's bars grow).
+- If Motion cannot load, the same reveals run on plain CSS. Under the system's reduced-motion setting nothing moves, and every page reads fully with JavaScript turned off.
+- Movement is transform and opacity only, plays once, and pauses off screen.
 - Fonts load from Google Fonts. Frank embeds General Sans from Fontshare (ITF Free Font License).
-- Motion runs once, uses only transform and opacity, pauses off screen, and switches off under the system's reduced-motion setting. Every page reads fully with JavaScript turned off.
 - Waymark's survey map and Lapse's character field are drawn live on a canvas; `waymark/map-still.webp` is the still shown before the script runs.
 - Sign-up forms are not connected to anything and say so when submitted.
 
