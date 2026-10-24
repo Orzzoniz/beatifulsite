@@ -17,6 +17,7 @@ Each demo credits the original designer of the concept it recreates.
 | Demo | What it is | Based on |
 | --- | --- | --- |
 | [`folders-ui/`](folders-ui/index.html) | Interactive knowledge-base folders UI with a folder tree, animated folder cards, sortable files, ⌘K search, drag-to-move and uploads | [Folders UI](https://www.inspora.design/posts/folders-ui) by David ([@david_visuals_](https://x.com/david_visuals_/status/2110699870600515737)) |
+| [`playful-bottom-nav/`](playful-bottom-nav/index.html) | Forms-app phone screen whose black tab bar slides a glowing capsule between five working tabs, with a sparkle trail, a new-form sheet and form and message details | [Playful bottom nav](https://www.inspora.design/posts/playful-bottom-nav) by M A L |
 
 ## Tooling
 
