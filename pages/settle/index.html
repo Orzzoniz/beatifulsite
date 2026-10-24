@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Settle Supplier Payments</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Settle queues the day's supplier bills and pays them overnight on one approval, matched by morning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@500&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · shape: Bento Grid · genre: modern-minimal · theme: Dusk (by request) · job: sign up · draw: 596651
+ * hero: Corridor · nav: masthead · footer: index columns · imagery: photographs, library 2, natural con=4 vib=6 · product built (tonight's run in glass, a month of runs, a bill on bone, code) · signature: tonight's payment run in smoked glass over hills at the low sun, one apricot strip still waiting · dusk: ridge/periwinkle-apricot/glass
+ * axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V5 · weakest: S, a payments page could be anyone's; it is pinned to one habit, a single approval at six, and every figure on the page belongs to that run */
+/* Hallmark · dismissed 29 · smoked glass with its lit edge is Dusk's product surface, set only over the photographs and slate, never glass on glass */
+/* Hallmark · dismissed 23 · the apricot strip is Dusk's open item closing the run list, a 14% tint inside one panel, never a field */
+:root {
+  color-scheme: dark;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  --color-paper: oklch(17.5% 0.014 268); --color-paper-2: oklch(21% 0.016 268); --color-paper-3: oklch(25% 0.017 268);
+  --color-ink: oklch(96% 0.006 75); --color-ink-2: oklch(85% 0.010 262); --color-muted: oklch(70% 0.016 262);
+  --color-rule: oklch(30% 0.016 266); --color-light: oklch(100% 0 0); --color-shade: oklch(10% 0.022 268);
+  --color-accent: oklch(77% 0.10 274); --color-accent-ink: oklch(19% 0.035 274); --color-accent-hi: oklch(84% 0.085 274);
+  --color-accent-deep: oklch(44% 0.13 274); --color-accent-soft: oklch(91% 0.038 274); --color-focus: oklch(80% 0.10 274);
+  --color-accent-2: oklch(83% 0.095 62); --color-dusk: oklch(70% 0.12 330);
+  --color-day-ink: oklch(22% 0.022 268); --color-day-muted: oklch(38% 0.022 266); --color-fog: oklch(94% 0.012 70);
+  --color-well: oklch(95.5% 0.008 75); --color-well-2: oklch(92% 0.010 75); --color-well-ink: oklch(21% 0.016 268); --color-well-muted: oklch(47% 0.016 265); --color-well-rule: oklch(87.5% 0.009 75); --color-card: oklch(99.5% 0.003 75);
+  --glass: oklch(22% 0.018 268 / 0.58); --glass-blur: 22px;
+  --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.10), inset 0 0 0 1px oklch(100% 0 0 / 0.06);
+  --shadow-card: 0 1px 0 oklch(100% 0 0 / 0.06) inset, 0 40px 80px -32px oklch(8% 0.02 268 / 0.7);
+  --line: oklch(100% 0 0 / 0.07); --tint: oklch(100% 0 0 / 0.05); --ghost: oklch(100% 0 0 / 0.04);
+  --font-display: "Wix Madefor Display", ui-sans-serif, system-ui, sans-serif; --font-body: "Wix Madefor Text", ui-sans-serif, system-ui, sans-serif;
+  --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --radius-card: 18px; --radius-inner: 10px; --radius-pill: 999px; --rule-hair: 1px;
+  --tracking-display: -0.022em; --display-weight: 500;
+}
+
+/* base (Hallmark scaffold) */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); scroll-padding-top: var(--space-3xl); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent); }
+::selection { background: color-mix(in oklab, var(--color-accent) 35%, transparent); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.16em; }
+a:hover { text-decoration-color: var(--color-accent); }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--display-weight, 700); font-synthesis: none; letter-spacing: var(--tracking-display); line-height: 1.05; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h1 { max-width: 20ch; font-size: var(--text-display); } h2 { max-width: 30ch; font-size: var(--text-section); } h3 { max-width: 40ch; font-size: var(--text-title); line-height: 1.2; }
+.lead { font-size: var(--text-lead); line-height: 1.45; max-width: 52ch; }
+p { margin: 0; text-wrap: pretty; }
+p:not([class]) { max-width: 65ch; }
+img, video { max-width: 100%; height: auto; display: block; }
+svg { display: block; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-left: max(var(--space-md), var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-md), var(--gutter), env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.num { font-variant-numeric: tabular-nums; } .num .c { color: var(--color-muted); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[data-slot] { position: relative; overflow: hidden; background: linear-gradient(160deg, var(--color-paper-2), var(--color-paper-3)); }
+[data-slot] > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: contrast(1.04) saturate(1.03); }
+[data-slot]:has(> img) > :not(img):not([data-keep]) { display: none !important; }
+@media (max-width: 60rem) { :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; } }
+@media (max-width: 40rem) { :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; } }
+@media (prefers-reduced-motion: reduce) { *:not(.keep-motion), *:not(.keep-motion)::before, *:not(.keep-motion)::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+
+/* page */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: var(--z-sticky-nav); background: var(--color-paper); }
+.skip { position: absolute; left: var(--space-md); top: calc(-1 * var(--space-3xl)); z-index: var(--z-toast); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-accent-ink); }
+.skip:focus-visible { top: var(--space-md); }
+.glass { background: var(--glass); border-radius: var(--radius-card); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35); backdrop-filter: blur(var(--glass-blur)) saturate(1.35); box-shadow: var(--glass-hi), var(--shadow-card); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 var(--space-lg); border: 0; border-radius: var(--radius-pill); background: var(--color-accent); color: var(--color-accent-ink); font: 600 0.9375rem/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer; box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-light) 35%, transparent); transition: background-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out); }
+.btn:hover { background: var(--color-accent-hi); box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-light) 35%, transparent), 0 0 0 4px color-mix(in oklab, var(--color-accent) 25%, transparent); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.btn--ghost { background: var(--ghost); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn--ghost:hover { background: var(--tint); box-shadow: inset 0 0 0 1px var(--line); }
+.btn--day { background: color-mix(in oklab, var(--color-fog) 40%, transparent); color: var(--color-day-ink); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-day-ink) 18%, transparent); }
+.btn--day:hover { background: color-mix(in oklab, var(--color-fog) 70%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-day-ink) 22%, transparent); }
+
+/* the email field and its button share one pill */
+.pill-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); width: min(100%, 30rem); }
+.pill { display: flex; align-items: center; gap: var(--space-2xs); min-height: 52px; padding: var(--space-2xs); border-radius: var(--radius-pill); }
+.pill--fog { background: color-mix(in oklab, var(--color-fog) 62%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-day-ink) 14%, transparent); }
+.pill--glass { background: var(--glass); box-shadow: var(--glass-hi); }
+.pill input { flex: 1; min-width: 0; height: 44px; padding: 0 var(--space-md); border: 1px solid transparent; border-radius: var(--radius-pill); background: transparent; font-size: var(--text-md); outline: 2px solid transparent; outline-offset: 0; }
+.pill--fog input { color: var(--color-day-ink); border-color: var(--color-day-muted); background: color-mix(in oklab, var(--color-card) 55%, transparent); } .pill--fog input::placeholder { color: var(--color-day-muted); opacity: 1; }
+.pill--glass input { color: var(--color-ink); border-color: var(--color-muted); } .pill--glass input::placeholder { color: var(--color-muted); opacity: 1; }
+.pill input:focus-visible { outline-color: var(--color-focus); }
+.pill input[aria-invalid] { border-color: var(--color-error); }
+.pill .btn { min-height: 44px; }
+.pill-form__help { min-height: 1lh; font-size: var(--text-sm); }
+.hero .pill-form__help { color: var(--color-day-muted); }
+.price .pill-form__help { color: var(--color-muted); }
+
+/* nav: a masthead over the photograph */
+.mast { position: absolute; z-index: var(--z-sticky-nav); top: env(safe-area-inset-top, 0px); left: 0; right: 0; color: var(--color-day-ink); }
+.mast__inner { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--space-lg); min-height: 80px; border-bottom: var(--rule-hair) solid color-mix(in oklab, var(--color-day-ink) 16%, transparent); }
+.mast__links { display: flex; gap: var(--space-lg); margin: 0; padding: 0; list-style: none; font-weight: 500; font-size: var(--text-md); }
+.mast__links a { text-decoration: none; color: var(--color-day-muted); white-space: nowrap; }
+.mast__links a:hover { color: var(--color-day-ink); text-decoration: underline; text-decoration-color: var(--color-accent-deep); }
+.wordmark { justify-self: center; font: 500 2.25rem/1 var(--font-display); letter-spacing: -0.04em; text-decoration: none; }
+.mast .btn { justify-self: end; min-height: 44px; }
+.wordmark:focus-visible, .mast__links a:focus-visible { outline: 2px solid var(--color-accent-deep); outline-offset: 4px; border-radius: 2px; }
+@media (max-width: 48rem) { .mast__links { display: none; } .mast__inner { grid-template-columns: auto 1fr; } .wordmark { justify-self: start; font-size: var(--text-2xl); } }
+
+/* hero: the corridor at the low sun */
+.hero { position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; min-height: max(720px, min(100dvh, 980px)); padding-block: calc(80px + var(--space-xl)) var(--space-2xl); padding-left: max(var(--space-md), var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-md), var(--gutter), env(safe-area-inset-right, 0px)); }
+.hero__photo { position: absolute; inset: 0; z-index: 0; }
+.hero__photo img { object-position: 50% 30%; animation: photo-settle 2.8s var(--ease-out) backwards; }
+@keyframes photo-settle { from { scale: 1.08; opacity: 0.6; } }
+.hero__scrim { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse 52% 40% at 50% 24%, color-mix(in oklab, var(--color-fog) 78%, transparent), transparent 82%), linear-gradient(to bottom, transparent 62%, var(--color-paper)); }
+.corridor { position: relative; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: var(--space-md); width: 100%; max-width: 46rem; text-align: center; color: var(--color-day-ink); }
+.corridor .lead { color: var(--color-day-ink); max-width: 36ch; }
+.corridor .pill-form { justify-items: center; }
+.run { position: relative; z-index: 3; width: min(100%, 44rem); margin-top: var(--space-lg); padding: var(--space-md) var(--space-lg); text-align: left; }
+.run__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); padding: 0 var(--space-xs) var(--space-md); }
+.run__head b { font: 500 var(--text-lg)/1.2 var(--font-display); }
+.run__head span { font-size: var(--text-sm); color: var(--color-muted); }
+.rows { margin: 0; padding: 0; list-style: none; }
+.rows li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-md); padding: var(--space-xs); border-top: var(--rule-hair) solid var(--line); }
+.initial { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius-pill); background: var(--tint); font: 500 var(--text-sm)/1 var(--font-body); color: var(--color-ink-2); }
+.payee { display: grid; font-weight: 500; line-height: 1.3; }
+.payee small { font-weight: 400; font-size: var(--text-sm); color: var(--color-muted); }
+.amount { font-weight: 500; text-align: right; }
+.state { display: inline-flex; align-items: center; gap: var(--space-xs); font-size: var(--text-sm); font-weight: 500; color: var(--color-accent); white-space: nowrap; }
+.state svg { width: 14px; height: 14px; } .state svg * { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.state--open { color: var(--color-accent-2); }
+.strip { display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); margin-top: var(--space-sm); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-inner); background: color-mix(in oklab, var(--color-accent-2) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent-2) 30%, transparent); font-size: var(--text-sm); }
+.strip b { font-weight: 600; color: var(--color-accent-2); }
+.js .run .rows li { opacity: 0; translate: 0 8px; transition: opacity var(--dur-long) var(--ease-out), translate var(--dur-long) var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms + 300ms); }
+.js .run.is-in .rows li { opacity: 1; translate: 0 0; }
+.js .run .strip { opacity: 0; translate: 0 10px; transition: opacity var(--dur-long) var(--ease-out) 650ms, translate var(--dur-long) var(--ease-out) 650ms; }
+.js .run.is-in .strip { opacity: 1; translate: 0 0; }
+@media (max-width: 40rem) { .rows li { grid-template-columns: auto minmax(0, 1fr) auto; } .rows .state { display: none; } .run { padding: var(--space-md); } }
+
+/* the bento */
+.section { padding-block: var(--section-gap) 0; }
+.head { display: grid; gap: var(--space-md); margin-bottom: var(--space-2xl); }
+.head .lead { color: var(--color-muted); }
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: minmax(300px, auto); gap: var(--gap-columns); }
+.tile { display: grid; grid-template-columns: minmax(0, 1fr); align-content: space-between; gap: var(--space-lg); padding: var(--space-xl); border-radius: var(--radius-card); background: var(--color-paper-2); box-shadow: inset 0 0 0 1px var(--line); min-width: 0; }
+.tile h3 { font-size: var(--text-title); }
+.tile p { color: var(--color-muted); }
+.tile--month { grid-column: 1 / span 7; grid-row: span 2; }
+.tile--price { grid-column: 8 / span 5; }
+.tile--bill { grid-column: 8 / span 5; background: var(--color-well); color: var(--color-well-ink); box-shadow: none; }
+.tile--bill p { color: var(--color-well-muted); }
+.tile--two { grid-column: 1 / span 4; }
+.tile--note { grid-column: 5 / span 4; background: var(--color-well); color: var(--color-well-ink); box-shadow: none; }
+.tile--note p { color: var(--color-well-muted); }
+.tile--bank { grid-column: 9 / span 4; }
+
+.nights { display: grid; grid-template-columns: repeat(22, minmax(0, 1fr)); align-items: end; gap: var(--space-xs); height: 260px; padding-top: var(--space-lg); }
+.night { position: relative; height: var(--h); border-radius: 6px; background: var(--color-accent); opacity: 0.88; }
+.night--flag::before { content: ""; position: absolute; left: 50%; top: calc(-1 * var(--space-md)); width: var(--space-xs); height: var(--space-xs); translate: -50% 0; border-radius: var(--radius-pill); background: var(--color-accent-2); }
+.night--open { background: var(--color-accent-2); opacity: 1; }
+.night--soon { background: repeating-linear-gradient(135deg, var(--tint) 0 4px, transparent 4px 8px); box-shadow: inset 0 0 0 1px var(--line); opacity: 1; }
+.js .night { transform-origin: bottom; transition: transform var(--dur-long) var(--ease-out); transition-delay: calc(var(--i, 0) * 25ms); }
+.js .nights:not(.is-in) .night { transform: scaleY(0.04); }
+.tally { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: var(--rule-hair) solid var(--color-rule); }
+.tally > div { padding: var(--space-md) var(--space-md) 0; border-left: var(--rule-hair) solid var(--color-rule); }
+.tally > div:first-child { padding-left: 0; border-left: 0; }
+.tally dt { font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+.tally dd { margin: var(--space-2xs) 0 0; font: 500 var(--text-2xl)/1.1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.tally dd .c { font-size: 0.6em; color: var(--color-muted); }
+.tally dd.open { color: var(--color-accent-2); }
+
+.price__fig { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-sm); font: 500 clamp(3rem, 6vw, 5.5rem)/0.9 var(--font-display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.price__fig small { font: 500 var(--text-title)/1 var(--font-display); letter-spacing: -0.01em; color: var(--color-ink-2); }
+
+.billcard { display: grid; gap: var(--space-2xs); padding: var(--space-lg); border-radius: var(--radius-inner); background: var(--color-card); box-shadow: 0 1px 2px color-mix(in oklab, var(--color-well-ink) 8%, transparent), 0 18px 30px -22px color-mix(in oklab, var(--color-well-ink) 40%, transparent); font-size: var(--text-sm); }
+.billcard__top { display: flex; justify-content: space-between; gap: var(--space-md); font-weight: 600; font-size: var(--text-md); }
+.billcard .m { color: var(--color-well-muted); }
+.billcard .q { margin-top: var(--space-xs); font-weight: 500; color: var(--color-accent-deep); }
+
+.approvers { display: grid; gap: var(--space-xs); }
+.approver { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); padding: var(--space-sm); border-radius: var(--radius-inner); background: var(--tint); font-size: var(--text-sm); }
+.approver .who { display: inline-flex; align-items: center; gap: var(--space-sm); font-weight: 500; }
+
+@media (max-width: 60rem) {
+  .bento { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
+  .tile--month, .tile--price, .tile--bill, .tile--two, .tile--note, .tile--bank { grid-column: auto; grid-row: auto; }
+  .tile { padding: var(--space-lg); }
+  .nights { height: 180px; gap: var(--space-2xs); }
+  .tally { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-md); }
+  .tally > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .tally dd { font-size: var(--text-xl); }
+}
+
+/* the tour: a ruled list beside one pane */
+.tour { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: center; }
+.tour__list { grid-column: 1 / span 5; margin: 0; padding: 0; list-style: none; border-top: var(--rule-hair) solid var(--color-rule); }
+.tour__list li { border-bottom: var(--rule-hair) solid var(--color-rule); }
+.tour__list li { display: grid; grid-template-columns: var(--space-md) minmax(0, 1fr); column-gap: var(--space-md); padding-block: var(--space-md); }
+.tour__list li::before { content: ""; grid-row: 1; align-self: center; width: var(--space-xs); height: var(--space-xs); border-radius: var(--radius-pill); }
+.tour__list li.is-on::before { background: var(--color-accent); }
+.tour__list button { grid-column: 2; justify-self: start; padding: var(--space-xs) 0; border: 0; background: none; color: var(--color-ink-2); text-align: left; cursor: pointer; white-space: nowrap; }
+.tour__list button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
+.tour__list .t { font: 500 var(--text-title)/1.25 var(--font-display); letter-spacing: -0.015em; }
+.tour__list .l { grid-column: 2; font-size: var(--text-md); color: var(--color-muted); }
+.tour__list button:hover .t { color: var(--color-ink); }
+.tour__list [aria-selected="true"] { color: var(--color-ink); }
+.js .tour__list li:not(.is-on) .l { display: none; }
+.tour__list li.is-on .l { animation: m-fade 0.4s var(--ease-out); }
+.tour__pane .glass:not([hidden]) { animation: m-fade-in 0.45s var(--ease-out); }
+@keyframes m-fade { from { opacity: 0; } }
+.tour__pane { grid-column: 7 / span 6; min-height: 420px; padding: var(--space-xl); display: grid; align-content: center; background: radial-gradient(120% 90% at 100% 0%, var(--color-paper-3), var(--color-paper-2)); border-radius: var(--radius-card); box-shadow: inset 0 0 0 1px var(--line); }
+.tour__pane .glass { padding: var(--space-lg); }
+.tour__pane .rows li:first-child { border-top: 0; }
+.pane__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); margin-bottom: var(--space-sm); }
+.pane__head b { font: 500 var(--text-lg)/1.2 var(--font-display); }
+.pane__head .num { font-size: var(--text-sm); color: var(--color-muted); }
+@media (max-width: 60rem) { .tour { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xl); } .tour__list, .tour__pane { grid-column: auto; } .tour__pane { min-height: 0; padding: var(--space-md); } }
+
+/* questions */
+.qa__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); }
+.qa h2 { grid-column: 1 / span 4; }
+.qa dl { grid-column: 5 / span 8; margin: 0; border-top: var(--rule-hair) solid var(--color-rule); }
+.qa dl > div { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--gap-columns); padding-block: var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.qa dt { font: 500 var(--text-title)/1.25 var(--font-display); letter-spacing: -0.015em; }
+.qa dd { margin: 0; color: var(--color-muted); }
+@media (max-width: 60rem) { .qa__grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xl); } .qa h2, .qa dl { grid-column: auto; } .qa dl > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); } }
+
+/* close: the code, in glass over the harbour */
+.close { position: relative; isolation: isolate; margin-top: var(--section-gap); padding-block: var(--space-4xl); overflow: hidden; }
+.close__photo { position: absolute; inset: 0; z-index: 0; }
+.close__photo img { object-position: 50% 60%; }
+.js .close [data-slot] > img { scale: 1.08; transition: scale 2.6s var(--ease-out); }
+.js .close.is-in [data-slot] > img { scale: 1; }
+@media (prefers-reduced-motion: reduce) { .js .close [data-slot] > img { scale: 1; transition: none; } }
+.close__scrim { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to bottom, var(--color-paper), color-mix(in oklab, var(--color-paper) 20%, transparent) 30%, color-mix(in oklab, var(--color-paper) 30%, transparent) 70%, var(--color-paper)); }
+.close__inner { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: center; }
+.close__text { grid-column: 1 / span 5; display: grid; gap: var(--space-lg); justify-items: start; padding: var(--space-xl); }
+.close__text .lead { color: var(--color-ink-2); }
+.code { grid-column: 7 / span 6; margin: 0; padding: var(--space-xl); }
+.code figcaption { display: flex; justify-content: space-between; gap: var(--space-md); margin-bottom: var(--space-md); padding-bottom: var(--space-sm); border-bottom: var(--rule-hair) solid var(--line); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+.code pre { margin: 0; overflow-x: auto; }
+.code code { font: 400 var(--text-sm)/1.8 var(--font-code); color: var(--color-ink); white-space: pre; }
+.code .k { color: var(--color-accent); } .code .r { color: var(--color-muted); }
+.js .code .ln { opacity: 0; transition: opacity 0.35s var(--ease-out); transition-delay: calc(var(--ln) * 90ms + 350ms); }
+.js .code.is-in .ln { opacity: 1; }
+@media (max-width: 60rem) { .close__inner { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xl); } .close__text, .code { grid-column: auto; } .close__text { padding: var(--space-lg); } .code { padding: var(--space-lg); } }
+
+/* footer: index columns */
+.footer { padding-block: var(--section-gap-s) var(--space-2xl); border-top: var(--rule-hair) solid var(--color-rule); }
+.footer__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); row-gap: var(--space-xl); }
+.footer__mark { grid-column: 1 / span 4; display: grid; gap: var(--space-sm); align-content: start; }
+.footer__mark b { font: 500 var(--text-2xl)/1 var(--font-display); letter-spacing: -0.03em; }
+.footer__mark p { color: var(--color-muted); font-size: var(--text-sm); max-width: 30ch; }
+.footer__col { grid-column: span 2; display: grid; gap: var(--space-xs); align-content: start; font-size: var(--text-sm); }
+.footer__col:nth-of-type(2) { grid-column: 7 / span 2; }
+.footer__col h3 { font: 500 var(--text-sm)/1.4 var(--font-body); letter-spacing: 0; color: var(--color-muted); }
+.footer__col ul { display: grid; gap: var(--space-xs); margin: 0; padding: 0; list-style: none; }
+.footer__col a { text-decoration: none; color: var(--color-ink-2); }
+.footer__col a:hover { text-decoration: underline; text-decoration-color: var(--color-accent); }
+.footer__col a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: 2px; }
+.footer__credits { grid-column: 1 / -1; padding-top: var(--space-lg); border-top: var(--rule-hair) solid var(--color-rule); font-size: var(--text-sm); color: var(--color-muted); }
+@media (max-width: 60rem) { .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .footer__mark { grid-column: 1 / -1; } .footer__col, .footer__col:nth-of-type(2) { grid-column: auto; } }
+
+/* motion: one shared layer, compositor only (opacity and translate), each piece runs once, from a visible default without script */
+.js [data-reveal], .js [data-stagger] > * { opacity: 0; translate: 0 var(--rise, 18px); transition: opacity 0.7s var(--ease-out), translate 0.7s var(--ease-out); transition-delay: var(--delay, 0ms); }
+.js [data-reveal].is-in, .js [data-stagger].is-in > * { opacity: 1; translate: 0 0; }
+@keyframes m-fade-in { from { opacity: 0; translate: 0 10px; } }
+@keyframes m-pop { 0% { opacity: 0; scale: 0.6; } 60% { opacity: 1; scale: 1.06; } 100% { scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal], .js [data-stagger] > * { opacity: 1; translate: none; transition: none; }
+}
+</style>
+</head>
+<body>
+
+<script>document.documentElement.classList.add('js'); document.documentElement.lang = 'en-GB';</script>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="mast">
+  <nav class="container mast__inner" aria-label="Main">
+    <ul class="mast__links">
+      <li><a href="#month">The month</a></li>
+      <li><a href="#tour">How it runs</a></li>
+      <li><a href="#api">API</a></li>
+    </ul>
+    <a class="wordmark" href="#top" aria-label="Settle home">Settle</a>
+    <a class="btn btn--day" href="#price">See the price</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="hero-h">
+    <div class="hero__photo" data-slot="hero" data-alt="Open land at the turn of the light, pale sky above, darker ground below">
+      <img src="hills.jpg" width="1920" height="1280" alt="Rolling farmland in haze under a low sun" fetchpriority="high">
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="corridor" data-stagger="120">
+      <h1 id="hero-h">Pay every supplier before you log off.</h1>
+      <p class="lead">Settle queues the day’s bills and pays them overnight, on one approval.</p>
+      <form class="pill-form" data-endpoint="" novalidate>
+        <label class="visually-hidden" for="hero-email">Work email</label>
+        <div class="pill pill--fog">
+          <input id="hero-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@company.com" required>
+          <button class="btn" type="submit">Start free</button>
+        </div>
+        <p class="pill-form__help" id="hero-help" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="run glass" data-run role="group" aria-label="Sample payment run for tonight">
+      <div class="run__head"><b>Tonight at 18:00</b><span>23 bills <span class="num">£41,280<span class="c">.50</span></span></span></div>
+      <ul class="rows">
+        <li style="--i: 0"><span class="initial">E</span><span class="payee">Example Print Co<small>Invoice 0412</small></span><span class="amount num">£1,240<span class="c">.00</span></span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Ready</span></li>
+        <li style="--i: 1"><span class="initial">N</span><span class="payee">Northern Example Ltd<small>Invoice 88</small></span><span class="amount num">£8,600<span class="c">.00</span></span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Ready</span></li>
+        <li style="--i: 2"><span class="initial">H</span><span class="payee">Example Hosting<small>October</small></span><span class="amount num">£312<span class="c">.50</span></span><span class="state state--open"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M7 4.5V7l1.6 1.4"/></svg>New payee</span></li>
+      </ul>
+      <div class="strip"><span><b>3 bills</b> need your eyes before six</span><span>Review</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="month" aria-labelledby="month-h">
+    <div class="container">
+      <div class="head" data-reveal>
+        <h2 id="month-h">One run a night, all month.</h2>
+      </div>
+      <div class="bento" data-stagger="90">
+        <article class="tile tile--month">
+          <div>
+            <h3>October’s runs</h3>
+            <p>Bar height is payments sent.</p>
+          </div>
+          <div class="nights" data-nights role="img" aria-label="Sample chart: payments per night through October, one night flagged, tonight still open, the rest to come">
+            <span class="night" style="--h: 46%; --i: 0"></span><span class="night" style="--h: 62%; --i: 1"></span><span class="night" style="--h: 38%; --i: 2"></span><span class="night" style="--h: 71%; --i: 3"></span><span class="night" style="--h: 55%; --i: 4"></span>
+            <span class="night" style="--h: 49%; --i: 5"></span><span class="night night--flag" style="--h: 84%; --i: 6"></span><span class="night" style="--h: 40%; --i: 7"></span><span class="night" style="--h: 58%; --i: 8"></span><span class="night" style="--h: 66%; --i: 9"></span>
+            <span class="night" style="--h: 44%; --i: 10"></span><span class="night" style="--h: 52%; --i: 11"></span><span class="night" style="--h: 77%; --i: 12"></span><span class="night" style="--h: 35%; --i: 13"></span><span class="night" style="--h: 60%; --i: 14"></span>
+            <span class="night" style="--h: 48%; --i: 15"></span><span class="night night--open" style="--h: 57%; --i: 16"></span><span class="night night--soon" style="--h: 50%; --i: 17"></span><span class="night night--soon" style="--h: 50%; --i: 18"></span><span class="night night--soon" style="--h: 50%; --i: 19"></span>
+            <span class="night night--soon" style="--h: 50%; --i: 20"></span><span class="night night--soon" style="--h: 50%; --i: 21"></span>
+          </div>
+          <dl class="tally" data-count>
+            <div><dt>Paid</dt><dd>412</dd></div>
+            <div><dt>Sent</dt><dd>£318,904<span class="c">.20</span></dd></div>
+            <div><dt>Bounced</dt><dd>1</dd></div>
+            <div><dt>Waiting</dt><dd class="open">3</dd></div>
+          </dl>
+        </article>
+        <article class="tile tile--price" id="price">
+          <h3 class="visually-hidden">Price</h3>
+          <p class="price__fig">40p <small>a payment</small></p>
+          <p>No monthly fee. Your bank’s charges are on us.</p>
+          <form class="pill-form" data-endpoint="" novalidate>
+            <label class="visually-hidden" for="price-email">Work email</label>
+            <div class="pill pill--glass">
+              <input id="price-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@company.com" required>
+              <button class="btn" type="submit">Start free</button>
+            </div>
+            <p class="pill-form__help" id="price-help" aria-live="polite"></p>
+          </form>
+        </article>
+        <article class="tile tile--bill">
+          <div>
+            <h3>Forward the bill</h3>
+            <p>Send it to bills@settle.example.com and it joins tonight’s run.</p>
+          </div>
+          <div class="billcard" aria-label="Sample bill as Settle reads it">
+            <div class="billcard__top"><span>Example Print Co</span><span class="num">£1,240.00</span></div>
+            <span class="m">Invoice 0412, due 31 Oct</span>
+            <span class="q">Queued for tonight</span>
+          </div>
+        </article>
+        <article class="tile tile--two">
+          <h3>Two keys over £10,000</h3>
+          <div class="approvers">
+            <div class="approver"><span class="who"><span class="initial">A</span>Alex</span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>17:52</span></div>
+            <div class="approver"><span class="who"><span class="initial">J</span>Jo</span><span class="state state--open"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M7 4.5V7l1.6 1.4"/></svg>Waiting</span></div>
+          </div>
+        </article>
+        <article class="tile tile--note">
+          <h3>A note at seven</h3>
+          <div class="billcard">
+            <div class="billcard__top"><span>Last night’s run</span><span class="num">07:00</span></div>
+            <span class="m">23 paid, none bounced, all matched to your books.</span>
+          </div>
+        </article>
+        <article class="tile tile--bank">
+          <h3>From your own account</h3>
+          <div class="approver"><span class="who"><span class="initial">X</span>Example Ltd current account</span><span class="num">ends 4417</span></div>
+          <p>Payments go through Open Banking. Your money never sits with us.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tour" aria-labelledby="tour-h">
+    <div class="container">
+      <div class="head" data-reveal><h2 id="tour-h">What happens after six.</h2></div>
+      <div class="tour" data-tour>
+        <ul class="tour__list" data-stagger="90" role="tablist" aria-label="Steps of a run" aria-orientation="vertical">
+          <li class="is-on"><button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="t">You approve once</span></button><p class="l">One tap for the whole run.</p></li>
+          <li><button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1"><span class="t">Payments go out</span></button><p class="l">Each one leaves your bank in the night.</p></li>
+          <li><button type="button" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1"><span class="t">Suppliers hear</span></button><p class="l">A remittance email for every payee.</p></li>
+          <li><button type="button" role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1"><span class="t">Books match</span></button><p class="l">Each payment is ticked against its bill.</p></li>
+        </ul>
+        <div class="tour__pane" data-reveal data-delay="150">
+          <div class="glass" role="tabpanel" id="p1" aria-labelledby="t1"><div class="pane__head"><b>Approve tonight’s run</b><span class="num">18:00</span></div><ul class="rows"><li><span class="initial">A</span><span class="payee">Alex<small>Approver</small></span><span class="amount num">23 bills</span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Approved</span></li></ul></div>
+          <div class="glass" role="tabpanel" id="p2" aria-labelledby="t2"><div class="pane__head"><b>Sending</b><span class="num">23:40</span></div><ul class="rows"><li><span class="initial">E</span><span class="payee">Example Print Co<small>Faster Payment</small></span><span class="amount num">£1,240<span class="c">.00</span></span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Sent</span></li></ul></div>
+          <div class="glass" role="tabpanel" id="p3" aria-labelledby="t3"><div class="pane__head"><b>Remittance</b><span class="num">23:41</span></div><ul class="rows"><li><span class="initial">E</span><span class="payee">accounts@example.com<small>Invoice 0412 paid</small></span><span class="amount num">£1,240<span class="c">.00</span></span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Emailed</span></li></ul></div>
+          <div class="glass" role="tabpanel" id="p4" aria-labelledby="t4"><div class="pane__head"><b>Matched</b><span class="num">06:12</span></div><ul class="rows"><li><span class="initial">E</span><span class="payee">Invoice 0412<small>Bank line 24 Oct</small></span><span class="amount num">£1,240<span class="c">.00</span></span><span class="state"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10l5-6"/></svg>Matched</span></li></ul></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section qa" id="questions" aria-labelledby="qa-h">
+    <div class="container qa__grid">
+      <h2 id="qa-h">Before your first run</h2>
+      <dl data-stagger="100">
+        <div><dt>Which banks?</dt><dd>Any UK business account that supports Open Banking.</dd></div>
+        <div><dt>Can I stop a payment?</dt><dd>Until it leaves, at around 23:30.</dd></div>
+        <div><dt>Who sees what?</dt><dd>Approvers see the run; everyone else sees bills.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="close" data-reveal style="--rise: 0px" id="api" aria-labelledby="api-h">
+    <div class="close__photo" data-slot="close" data-alt="A harbour or shore in evening light">
+      <img src="harbour.jpg" width="1920" height="1440" alt="A stone harbour pier and moored boats in soft evening light" loading="lazy">
+    </div>
+    <div class="close__scrim" aria-hidden="true"></div>
+    <div class="container close__inner">
+      <div class="close__text glass" data-reveal>
+        <h2 id="api-h">Or queue bills from your code.</h2>
+        <p class="lead">One call adds a bill to tonight’s run.</p>
+        <a class="btn" href="#top">Start free</a>
+      </div>
+      <figure class="code glass" data-reveal data-delay="180">
+        <figcaption>Queue a bill <span>returns 201</span></figcaption>
+<pre><code><span class="k">curl</span> https://api.example.com/v1/bills \
+  -H "Authorization: Bearer $SETTLE_KEY" \
+  -d payee="Example Print Co" \
+  -d amount=1240.00 \
+  -d due=2026-10-31
+
+<span class="r">{ "status": "queued", "run": "tonight" }</span></code></pre>
+      </figure>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid" data-stagger="80">
+    <div class="footer__mark"><b>Settle</b><p>A made-up product, built as a Hallmark demo. Payees and figures are examples.</p></div>
+    <div class="footer__col"><h3>Product</h3><ul><li><a href="#month">The month</a></li><li><a href="#tour">How it runs</a></li><li><a href="#price">Price</a></li></ul></div>
+    <div class="footer__col"><h3>Build</h3><ul><li><a href="#api">API</a></li><li><a href="#questions">Questions</a></li></ul></div>
+    <div class="footer__col"><h3>Start</h3><ul><li><a href="#top">Start free</a></li></ul></div>
+    <p class="footer__credits" data-credits>Photographs: <a href="https://commons.wikimedia.org/wiki/File:PalouseFromSteptoeButteMay2023-1.jpg">Caleb Riston</a> (CC0, Wikimedia Commons) and <a href="https://commons.wikimedia.org/wiki/File:Newlyn_old_harbour_pier_July_2026_01.jpg">ArildV</a> (CC BY-SA 4.0, Wikimedia Commons).</p>
+  </div>
+</footer>
+
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+<script>
+/* The tally counts up once, from the figures already in the markup. */
+(() => {
+  const tally = document.querySelector('[data-count]');
+  if (!tally || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const items = [...tally.querySelectorAll('dd')].map((dd) => { const node = dd.firstChild; const raw = node.textContent; const n = parseFloat(raw.replace(/[^0-9.]/g, '')); return { node, raw, n, money: raw.trim().startsWith('£') }; });
+  const fmt = (v, money) => (money ? '£' : '') + Math.round(v).toLocaleString('en-GB');
+  items.forEach((it) => { it.node.textContent = fmt(0, it.money); });
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return; io.disconnect();
+    const t0 = performance.now(), dur = 1400;
+    const tick = (now) => { const t = Math.min(1, (now - t0) / dur), k = 1 - Math.pow(1 - t, 4); items.forEach((it) => { it.node.textContent = t < 1 ? fmt(it.n * k, it.money) : it.raw; }); if (t < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }, { threshold: 0.4 });
+  io.observe(tally);
+})();
+
+/* The code sample arrives line by line. */
+(() => {
+  const code = document.querySelector('.code code');
+  if (code) code.innerHTML = code.innerHTML.split('\n').map((l, i) => `<span class="ln" style="--ln: ${i}">${l}</span>`).join('\n');
+})();
+
+/* Rows rise in once; bars grow from their feet when seen. */
+(() => {
+  const els = [document.querySelector('[data-run]'), document.querySelector('[data-nights]')].filter(Boolean);
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach((e) => e.classList.add('is-in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: 0.25 });
+  els.forEach((e) => io.observe(e));
+  setTimeout(() => els.forEach((e) => e.classList.add('is-in')), 5000);
+})();
+
+/* The tour: a ruled list beside one pane. */
+(() => {
+  const tour = document.querySelector('[data-tour]');
+  if (!tour) return;
+  const tabs = [...tour.querySelectorAll('[role="tab"]')];
+  const show = (tab, focus) => { tabs.forEach((t) => { const on = t === tab; t.closest('li').classList.toggle('is-on', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; }); if (focus) tab.focus(); };
+  tabs.forEach((t, i) => { t.addEventListener('click', () => show(t)); t.addEventListener('keydown', (e) => { const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key]; if (k) { e.preventDefault(); show(tabs[(i + k + tabs.length) % tabs.length], true); } }); });
+  show(tabs[0]);
+})();
+
+/* Forms that post nowhere yet. */
+document.querySelectorAll('form[data-endpoint]').forEach((form) => {
+  const input = form.querySelector('input'), help = form.querySelector('[aria-live]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ok = input.checkValidity();
+    input.toggleAttribute('aria-invalid', !ok);
+    if (!ok) { input.setAttribute('aria-describedby', help.id); help.textContent = 'That address looks incomplete. Write it as name@example.com.'; input.focus(); return; }
+    if (!form.dataset.endpoint) { help.textContent = 'Nothing was sent: this demo form is not connected.'; return; }
+    fetch(form.dataset.endpoint, { method: 'POST', body: new FormData(form) })
+      .then((r) => { help.textContent = r.ok ? 'Check ' + input.value.trim() + ' to finish signing up.' : 'That did not go through. Try again in a minute.'; })
+      .catch(() => { help.textContent = 'That did not go through. Try again in a minute.'; });
+  });
+});
+</script>
+<script>
+/* Reveals: each [data-reveal] and each child of [data-stagger] rises in once, when it is seen. */
+(() => {
+  const els = [...document.querySelectorAll('[data-reveal], [data-stagger]')];
+  els.forEach((el) => {
+    if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay + 'ms');
+    if (el.hasAttribute('data-stagger')) { const step = +el.dataset.stagger || 90, base = +(el.dataset.delay || 0); [...el.children].forEach((c, i) => c.style.setProperty('--delay', (base + i * step) + 'ms')); }
+  });
+  const show = (el) => el.classList.add('is-in');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(show); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+  els.forEach((el) => io.observe(el));
+  addEventListener('beforeprint', () => els.forEach(show));
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Waymark</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Waymark lets path wardens log broken stiles, gates and fallen trees on foot, and gives the ranger one work list.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600&family=Red+Hat+Text:wght@400;500&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · shape: Marquee Hero · genre: modern-minimal · theme: Furrow (by request) · job: sign up · draw: 4c0cc0
+ * hero: Corridor · nav: floating pill · footer: statement · imagery: product built (survey map, entry card, work list), photographs, library 1, natural con=8 sat=-6 · signature: one morning's walk drawn on a generated survey map, each fault pinned where the warden stood
+ * axes: light/grotesk-sans/warm · posture: committed · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: P, a path app has no argument by itself; the page argues that a report is useless without a place, shown as a walker's email beside the same stile logged in Waymark */
+/* Hallmark · dismissed F4 · the tangerine on the selected tab and the period switch is Furrow's selection fill for a chosen state, never a second action */
+/* Hallmark · dismissed 58 · the steps screen counts the six kind keys, four fault chips and three saved rows of a working control, each a one-word label */
+:root {
+  color-scheme: light;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --text-hero: clamp(3rem, 5.4vw, 5.75rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  --color-paper: oklch(96% 0.011 85); --color-paper-2: oklch(99.5% 0.005 85); --color-paper-3: oklch(92% 0.016 85);
+  --color-ink: oklch(18% 0.006 60); --color-ink-2: oklch(28% 0.008 60); --color-muted: oklch(44% 0.012 60); --color-rule: oklch(88% 0.013 85);
+  --color-accent: oklch(70% 0.19 40); --color-accent-ink: oklch(18% 0.006 60); --color-accent-soft: oklch(91% 0.05 50); --color-focus: oklch(60% 0.19 40);
+  --color-green: oklch(48% 0.11 150); --color-green-soft: oklch(92% 0.04 150);
+  --color-contour: oklch(62% 0.07 58); --color-water: oklch(60% 0.05 232); --color-hedge: oklch(50% 0.1 150);
+  --color-grid: oklch(90% 0.014 85); --color-grid-strong: oklch(85% 0.018 85); --color-sheet: oklch(99.3% 0.004 85);
+  --color-on-photo: oklch(97% 0.008 85); --color-on-photo-2: oklch(88% 0.012 85);
+  --font-display: "Red Hat Display", "Red Hat Text", ui-sans-serif, sans-serif; --font-body: "Red Hat Text", ui-sans-serif, system-ui, sans-serif;
+  --font-outlier: "Red Hat Mono", ui-monospace, monospace;
+  --radius-card: 10px; --radius-entry: 14px; --radius-pill: 6px; --rule-hair: 1px;
+  --shadow-card: 0 1px 2px oklch(18% 0.006 60 / 0.08), 0 14px 28px -16px oklch(18% 0.006 60 / 0.28);
+  --shadow-lift: 0 1px 1px oklch(18% 0.006 60 / 0.1), 0 2px 4px -1px oklch(18% 0.006 60 / 0.1), 0 24px 44px -20px oklch(18% 0.006 60 / 0.42);
+  --scrim: oklch(18% 0.006 60 / 0.78);
+  --tracking-display: -0.035em; --display-weight: 600;
+}
+
+/* base (Hallmark scaffold) */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); scroll-padding-top: var(--space-3xl); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent); }
+::selection { background: color-mix(in oklab, var(--color-accent) 22%, transparent); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.16em; }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--display-weight, 700); font-synthesis: none; letter-spacing: var(--tracking-display); line-height: 1.05; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h1 { max-width: 20ch; font-size: var(--text-display); } h2 { max-width: 30ch; font-size: var(--text-section); } h3 { max-width: 40ch; font-size: var(--text-title); line-height: 1.2; }
+.lead { font-size: var(--text-lead); line-height: 1.45; max-width: 52ch; }
+p { margin: 0; text-wrap: pretty; }
+p:not([class]) { max-width: 65ch; }
+img, video { max-width: 100%; height: auto; display: block; }
+svg { display: block; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-left: max(var(--space-md), var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-md), var(--gutter), env(safe-area-inset-right, 0px)); box-sizing: border-box; }
+.num, .figure, td.num { font-variant-numeric: tabular-nums; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[data-slot] { position: relative; overflow: hidden; background: linear-gradient(160deg, var(--color-paper-2, var(--color-paper)), var(--color-paper-3, var(--color-paper))); }
+[data-slot] > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+[data-slot]:has(> img) > :not(img):not([data-keep]) { display: none !important; }
+@media (max-width: 60rem) { :root { --gutter: 24px; --section-gap-s: 80px; --section-gap: 96px; --section-gap-l: 120px; } }
+@media (max-width: 40rem) { :root { --gutter: 16px; --section-gap-s: 56px; --section-gap: 72px; --section-gap-l: 96px; --gap-columns: 16px; } }
+@media (prefers-reduced-motion: reduce) { *:not(.keep-motion), *:not(.keep-motion)::before, *:not(.keep-motion)::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+[data-slot] > img { filter: contrast(1.08) saturate(0.94); }
+
+/* page */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: var(--z-sticky); background: var(--color-paper); }
+.num { font-family: var(--font-outlier); }
+.skip { position: absolute; left: var(--space-md); top: calc(-1 * var(--space-3xl)); z-index: var(--z-toast); padding: var(--space-xs) var(--space-md); border-radius: var(--radius-pill); background: var(--color-ink); color: var(--color-paper-2); }
+.skip:focus-visible { top: var(--space-md); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); min-height: 48px; padding: 0 var(--space-lg); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-pill); background: var(--color-paper-2); color: var(--color-ink); font: 500 var(--text-md)/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer; box-shadow: inset 0 1px 0 var(--color-sheet), 0 1px 1px var(--color-rule); transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.btn:hover { background: var(--color-paper); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
+.btn[aria-busy="true"] { cursor: progress; }
+.btn--primary { background: var(--color-accent); color: var(--color-accent-ink); border-color: color-mix(in oklab, var(--color-accent) 78%, var(--color-ink)); box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-sheet) 32%, transparent), inset 0 -1px 0 color-mix(in oklab, var(--color-ink) 10%, transparent); }
+.btn--primary:hover { background: color-mix(in oklab, var(--color-accent) 90%, var(--color-ink)); }
+.btn--sm { min-height: 44px; padding: 0 var(--space-md); }
+
+/* nav: floating pill */
+.nav { position: fixed; z-index: var(--z-sticky-nav); top: calc(env(safe-area-inset-top, 0px) + var(--space-md)); left: 50%; transform: translateX(-50%); width: min(calc(100% - 2 * max(16px, var(--gutter))), 46rem); display: flex; align-items: center; gap: var(--space-lg); min-height: 60px; padding-block: var(--space-xs); padding-inline: var(--space-md) var(--space-xs); background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.wordmark { display: inline-flex; align-items: center; gap: var(--space-xs); font: 600 var(--text-lg)/1 var(--font-display); letter-spacing: -0.02em; text-decoration: none; white-space: nowrap; }
+.wordmark:focus-visible, .nav__links a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 2px; }
+.mark .mark__disc { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 1.5; }
+.mark .mark__arrow { fill: var(--color-ink); }
+.nav__links { display: flex; gap: var(--space-lg); margin: 0 0 0 auto; padding: 0; list-style: none; font-size: var(--text-sm); font-weight: 500; }
+.nav__links a { color: var(--color-ink-2); text-decoration: none; white-space: nowrap; }
+.nav__links a:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); }
+@media (max-width: 48rem) { .nav__links { display: none; } .nav .btn { margin-left: auto; } }
+
+/* hero: corridor over the survey */
+.hero { position: relative; isolation: isolate; display: grid; min-height: max(640px, min(100dvh, 960px)); }
+.map { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: var(--color-paper) url("map-still.webp") center / cover no-repeat; }
+.map canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__inner { position: relative; z-index: 1; display: grid; place-items: center; padding-block: var(--space-3xl) var(--space-2xl); pointer-events: none; }
+.corridor { pointer-events: auto; }
+.corridor { display: grid; justify-items: center; gap: var(--space-lg); text-align: center; }
+.corridor h1 { font-size: var(--text-hero); max-width: 18ch; line-height: 1; }
+.corridor .lead { max-width: 34ch; color: var(--color-ink-2); text-wrap: balance; }
+.br-wide { display: none; }
+@media (min-width: 40rem) { .br-wide { display: inline; } }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-sm); margin-top: var(--space-xs); }
+.terms { font-size: var(--text-sm); color: var(--color-muted); }
+
+.pins { position: absolute; inset: 0; z-index: 2; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.pin { position: absolute; left: var(--x); top: var(--y); display: flex; align-items: center; gap: var(--space-xs); transform: translate(-9px, -50%); }
+.pin--left { flex-direction: row-reverse; transform: translate(calc(-100% + 9px), -50%); }
+.pin__mark { width: 18px; height: 18px; flex-shrink: 0; }
+.pin__mark .shape { fill: var(--color-paper-2); stroke: var(--color-ink); stroke-width: 2; }
+.pin.is-open .pin__mark .shape { fill: var(--color-accent); }
+.pin__tag { display: inline-flex; align-items: baseline; gap: var(--space-xs); padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-pill); background: var(--color-ink); color: var(--color-paper-2); font-size: var(--text-sm); font-weight: 500; line-height: 1.3; white-space: nowrap; box-shadow: var(--shadow-card); }
+.pin__tag .num { font-size: var(--text-xs); color: var(--color-on-photo-2); }
+.js .pin { opacity: 0; translate: 0 -8px; transition: opacity var(--dur-long) var(--ease-out), translate var(--dur-long) var(--ease-out); }
+.js .pin.is-landed { opacity: 1; translate: 0 0; }
+
+@media (max-width: 74.99rem) {
+  .hero { min-height: 0; grid-template-rows: auto auto; }
+  .hero__inner { padding-block: calc(var(--space-3xl) + var(--space-lg)) var(--space-xl); }
+  .map { position: relative; grid-row: 2; height: clamp(380px, 62vw, 540px); border-block: var(--rule-hair) solid var(--color-rule); }
+}
+@media (max-width: 40rem) { .pin:not(.is-open) .pin__tag { display: none; } }
+
+/* sections */
+.section { padding-block: var(--section-gap) 0; }
+.section--far { padding-block-start: var(--section-gap-l); }
+.head { display: grid; gap: var(--space-md); margin-bottom: var(--space-2xl); }
+.head .lead { color: var(--color-muted); }
+.head--split { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: end; }
+.head--split h2 { grid-column: 1 / span 6; }
+.head--split .lead { grid-column: 8 / span 5; }
+@media (max-width: 60rem) { .head--split { grid-template-columns: minmax(0, 1fr); } .head--split h2, .head--split .lead { grid-column: auto; } }
+
+/* the report: an email beside the same fault in Waymark */
+.pair { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: center; }
+.pair figure { margin: 0; display: grid; gap: var(--space-md); }
+.pair__before { grid-column: 1 / span 5; }
+.pair__after { grid-column: 7 / span 6; }
+.pair figcaption { font-size: var(--text-sm); color: var(--color-muted); }
+.mail { display: grid; gap: var(--space-lg); padding: var(--space-xl); border-radius: var(--radius-card); background: var(--color-paper-3); color: var(--color-ink-2); rotate: -1.2deg; }
+.mail dl { display: grid; gap: var(--space-xs); margin: 0; padding-bottom: var(--space-md); border-bottom: var(--rule-hair) solid var(--color-grid-strong); font-size: var(--text-sm); }
+.mail dl div { display: flex; gap: var(--space-sm); }
+.mail dt { min-width: 4.5rem; color: var(--color-muted); }
+.mail dd { margin: 0; }
+.mail p { font-size: var(--text-lg); line-height: 1.5; }
+
+.entry { border-radius: var(--radius-entry); background: var(--color-paper-2); box-shadow: 0 0 0 1px var(--color-ink), var(--shadow-lift); overflow: hidden; }
+.entry__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) var(--space-lg); background: var(--color-ink); color: var(--color-paper-2); font-weight: 500; }
+.entry__head .num { font-size: var(--text-sm); color: var(--color-on-photo-2); }
+.entry__kind { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.entry__kind .shape { fill: var(--color-accent); stroke: var(--color-paper-2); stroke-width: 2; }
+.notebook { background: linear-gradient(var(--color-grid) 1px, transparent 1px) 0 0 / 8px 8px, linear-gradient(90deg, var(--color-grid) 1px, transparent 1px) 0 0 / 8px 8px, var(--color-paper-2); }
+.entry__body { padding: var(--space-lg); display: grid; gap: var(--space-lg); }
+.entry__time { font: 600 44px/1 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; border-top: var(--rule-hair) solid var(--color-ink); }
+.cells > div { display: grid; gap: var(--space-2xs); padding: var(--space-sm) var(--space-md) var(--space-sm) 0; border-bottom: var(--rule-hair) solid var(--color-ink); background: var(--color-paper-2); }
+.cells > div:nth-child(even) { padding-left: var(--space-md); border-left: var(--rule-hair) solid var(--color-ink); }
+.cells > .cells__wide { grid-column: 1 / -1; padding-right: 0; }
+.cells > .cells__wide ~ div:nth-child(even) { padding-left: 0; border-left: 0; }
+.cells > .cells__wide ~ div:nth-child(odd) { padding-left: var(--space-md); border-left: var(--rule-hair) solid var(--color-ink); }
+.cells dt { font-size: var(--text-xs); font-weight: 500; color: var(--color-muted); }
+.cells dd { margin: 0; font-weight: 500; }
+.cells dd.num { font-size: var(--text-sm); font-weight: 500; }
+.entry__keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); padding: 0 var(--space-lg) var(--space-lg); }
+.key { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-pill); background: var(--color-paper-2); box-shadow: inset 0 1px 0 var(--color-sheet), 0 1px 1px var(--color-rule); font-weight: 500; }
+.chip { display: inline-flex; align-items: center; min-height: 24px; padding: 0 var(--space-xs); border-radius: var(--radius-pill); font-size: var(--text-xs); font-weight: 500; white-space: nowrap; }
+.chip--open { background: var(--color-accent); color: var(--color-accent-ink); }
+.chip--fixed, .chip--saved { background: var(--color-green-soft); color: var(--color-green); }
+@media (max-width: 60rem) { .pair { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-2xl); } .pair__before, .pair__after { grid-column: auto; } .mail { rotate: none; } }
+
+/* three taps */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-columns); margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.step { display: grid; grid-template-rows: auto auto 1fr; gap: var(--space-sm); counter-increment: step; }
+.step__ui { display: grid; align-content: center; min-height: 272px; margin-bottom: var(--space-md); padding: var(--space-lg); border-radius: var(--radius-card); background: var(--color-paper-3); }
+.step h3 { display: flex; align-items: baseline; gap: var(--space-sm); }
+.step h3::before { content: counter(step); color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.step p { color: var(--color-muted); max-width: 36ch; }
+.keys, .chips { margin: 0; padding: 0; border: 0; min-width: 0; }
+.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); }
+.keys input, .chips input, .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.keys label { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 var(--space-xs); border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-pill); background: var(--color-paper-2); box-shadow: inset 0 1px 0 var(--color-sheet), 0 1px 1px var(--color-grid-strong); font-weight: 500; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.keys label:hover { background: var(--color-paper); }
+.keys label:active { transform: translateY(1px); }
+.keys input:checked + label { background: var(--color-accent); border-color: color-mix(in oklab, var(--color-accent) 78%, var(--color-ink)); color: var(--color-accent-ink); box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-sheet) 32%, transparent), inset 0 -1px 0 color-mix(in oklab, var(--color-ink) 10%, transparent); }
+.keys input:focus-visible + label, .chips input:focus-visible + label, .seg input:focus-visible + label { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.chips legend { width: 100%; margin-bottom: var(--space-sm); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+.chips label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-md); border: var(--rule-hair) solid var(--color-grid-strong); border-radius: var(--radius-pill); background: var(--color-paper-2); font-weight: 500; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
+.chips label:hover { background: var(--color-paper); }
+.chips input:checked + label { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper-2); }
+.queue { display: grid; margin: 0; padding: 0; list-style: none; border-top: var(--rule-hair) solid var(--color-ink); }
+.queue li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); min-height: 56px; border-bottom: var(--rule-hair) solid var(--color-grid-strong); font-weight: 500; }
+.queue__note { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-muted); }
+@media (max-width: 60rem) { .steps { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-2xl); } .step__ui { min-height: 0; } }
+
+/* the work list */
+.tabs { display: inline-flex; gap: var(--space-2xs); margin-bottom: var(--space-lg); padding: var(--space-2xs); border-radius: calc(var(--radius-pill) + var(--space-2xs)); background: var(--color-paper-3); }
+.tabs button { min-height: 44px; padding: 0 var(--space-md); border: var(--rule-hair) solid transparent; border-radius: var(--radius-pill); background: transparent; color: var(--color-ink-2); font-weight: 500; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
+.tabs button:hover { background: var(--color-paper-2); }
+.tabs button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.tabs button[aria-selected="true"] { background: var(--color-accent); border-color: color-mix(in oklab, var(--color-accent) 78%, var(--color-ink)); color: var(--color-accent-ink); }
+.sheet { position: relative; border-radius: 3px; background: var(--color-sheet); box-shadow: var(--shadow-lift); padding: var(--space-xl); }
+.sheet::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background:
+  linear-gradient(to bottom, transparent calc(33.3% - 6px), color-mix(in oklab, var(--color-ink) 2%, transparent) 33.3%, transparent calc(33.3% + 1px)),
+  linear-gradient(to bottom, transparent calc(66.6% - 6px), color-mix(in oklab, var(--color-ink) 2%, transparent) 66.6%, transparent calc(66.6% + 1px)); }
+.sheet + .sheet { margin-top: var(--space-lg); }
+.sheet__head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+.sheet__head p:first-child { font: 600 var(--text-title)/1.2 var(--font-display); letter-spacing: -0.02em; }
+.sheet__head .num { font-size: var(--text-sm); color: var(--color-muted); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+thead th { padding: 0 var(--space-md) var(--space-sm) 0; border-bottom: var(--rule-hair) solid var(--color-ink); font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); text-align: left; white-space: nowrap; }
+tbody td, tbody th { padding: var(--space-md) var(--space-md) var(--space-md) 0; border-bottom: var(--rule-hair) solid var(--color-rule); text-align: left; vertical-align: middle; }
+tbody th { font-weight: 500; white-space: nowrap; }
+td.num, th.num { font-size: var(--text-sm); white-space: nowrap; }
+.sheet code { display: block; overflow-x: auto; font: 400 var(--text-sm)/1.7 var(--font-outlier); color: var(--color-ink-2); white-space: pre; }
+.sheet pre { margin: 0; }
+@media (max-width: 40rem) {
+  .sheet { padding: var(--space-lg) var(--space-md); }
+  .table-wrap table, .table-wrap tbody { display: block; }
+  .table-wrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .table-wrap tbody tr { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: "ref ref ref status" "fault fault fault fault" "path grid grid grid"; column-gap: var(--space-md); row-gap: var(--space-2xs); padding-block: var(--space-md); border-bottom: var(--rule-hair) solid var(--color-rule); }
+  .table-wrap tbody th, .table-wrap tbody td { padding: 0; border: 0; }
+  .table-wrap tbody th { grid-area: ref; } .table-wrap tbody td:nth-child(2) { grid-area: fault; font-weight: 500; } .table-wrap tbody td:nth-child(3) { grid-area: path; } .table-wrap tbody td:nth-child(4) { grid-area: grid; } .table-wrap tbody td:nth-child(5) { grid-area: status; }
+  .table-wrap tbody td.num { color: var(--color-muted); }
+}
+
+/* questions */
+.qa { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); }
+.qa h2 { grid-column: 1 / span 4; align-self: start; }
+.qa dl { grid-column: 5 / span 8; margin: 0; border-top: var(--rule-hair) solid var(--color-ink); }
+.qa dl > div { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--gap-columns); padding-block: var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.qa dt { font: 600 var(--text-title)/1.2 var(--font-display); letter-spacing: -0.02em; }
+.qa dd { margin: 0; color: var(--color-muted); }
+@media (max-width: 60rem) { .qa { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xl); } .qa h2, .qa dl { grid-column: auto; } .qa dl > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); } }
+
+/* pricing */
+.price-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-lg); margin-bottom: var(--space-2xl); }
+.price-head > div { display: grid; gap: var(--space-md); }
+.price-head .lead { color: var(--color-muted); }
+.seg { display: inline-flex; gap: var(--space-2xs); margin: 0; padding: var(--space-2xs); border: 0; border-radius: calc(var(--radius-pill) + var(--space-2xs)); background: var(--color-paper-3); }
+.seg label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-md); border: var(--rule-hair) solid transparent; border-radius: var(--radius-pill); font-weight: 500; color: var(--color-ink-2); cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
+.seg label:hover { background: var(--color-paper-2); }
+.seg input:checked + label { background: var(--color-accent); border-color: color-mix(in oklab, var(--color-accent) 78%, var(--color-ink)); color: var(--color-accent-ink); }
+.plans { border-top: 2px solid var(--color-ink); }
+.plan { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 2fr) minmax(0, 2fr); column-gap: var(--gap-columns); align-items: center; padding-block: var(--space-xl); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.plan h3 { font-size: var(--text-2xl); }
+.plan__for { margin-top: var(--space-xs); color: var(--color-muted); }
+.plan__has { color: var(--color-ink-2); }
+.plan__price { font: 600 var(--text-2xl)/1 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plan__price small { display: block; margin-top: var(--space-xs); font: 400 var(--text-sm)/1.3 var(--font-body); letter-spacing: 0; color: var(--color-muted); }
+.plan .btn { justify-self: end; }
+.yearly { display: none; }
+.pricing:has(#period-year:checked) .yearly { display: block; }
+.pricing:has(#period-year:checked) .monthly { display: none; }
+@media (max-width: 60rem) { .plan { grid-template-columns: minmax(0, 1fr) auto; row-gap: var(--space-md); } .plan__has { grid-column: 1 / -1; grid-row: 2; } .plan .btn { grid-column: 1 / -1; justify-self: start; } }
+
+/* close: start, over the dale */
+.close { position: relative; isolation: isolate; display: grid; align-items: center; min-height: 600px; margin-top: var(--section-gap); }
+.close__photo { position: absolute; inset: 0; z-index: 0; }
+.close__scrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, var(--scrim) 0%, color-mix(in oklab, var(--scrim) 70%, transparent) 42%, transparent 72%); }
+.close__inner { position: relative; z-index: 3; padding-block: var(--space-3xl); }
+.close__copy { display: grid; gap: var(--space-lg); max-width: 34rem; color: var(--color-on-photo); }
+.close__copy .lead { color: var(--color-on-photo-2); }
+.start { display: grid; gap: var(--space-xs); margin-top: var(--space-xs); }
+.start__row { display: flex; gap: var(--space-xs); }
+.field { position: relative; flex: 1; min-width: 0; }
+.field label { position: absolute; left: var(--space-md); top: var(--space-xs); font-size: 0.75rem; font-weight: 500; color: var(--color-muted); }
+.field input { width: 100%; height: 52px; padding: 20px var(--space-md) var(--space-2xs); border: var(--rule-hair) solid var(--color-muted); border-radius: var(--radius-pill); background: var(--color-paper-2); color: var(--color-ink); font-size: var(--text-md); outline: 2px solid transparent; outline-offset: 2px; }
+.field input:focus-visible { outline-color: var(--color-focus); }
+.field input[aria-invalid] { border-color: var(--color-error); }
+.start .btn { min-height: 52px; }
+.start__help { min-height: 1lh; font-size: var(--text-sm); color: var(--color-on-photo-2); }
+@media (max-width: 40rem) { .start__row { flex-direction: column; } .close__scrim { background: var(--scrim); } }
+
+/* footer: a statement */
+.footer { padding-block: var(--section-gap-s) var(--space-2xl); }
+.footer__statement { max-width: 22ch; font: 600 var(--text-display-s)/1.02 var(--font-display); letter-spacing: var(--tracking-display); text-wrap: balance; }
+.footer__links { display: flex; flex-wrap: wrap; gap: var(--space-lg); margin: var(--space-xl) 0 0; padding: var(--space-lg) 0 0; border-top: var(--rule-hair) solid var(--color-ink); list-style: none; font-weight: 500; }
+.footer__links a { text-decoration: none; }
+.footer__links a:hover { text-decoration: underline; text-decoration-color: var(--color-accent); }
+.footer__links a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 2px; }
+.footer__small { display: grid; gap: var(--space-2xs); margin-top: var(--space-xl); font-size: var(--text-sm); color: var(--color-muted); }
+.footer__small a:hover { text-decoration-color: var(--color-accent); }
+
+/* the map loupe: 1.9x, a fine ring and a reticle; it rests on Stile 14 and glides to the pointer */
+.loupe { position: absolute; left: 0; top: 0; z-index: 1; width: 168px; height: 168px; border-radius: 50%; overflow: hidden; pointer-events: none; box-shadow: 0 0 0 1px var(--color-ink), 0 0 0 5px var(--color-paper-2), 0 0 0 6px var(--color-ink), var(--shadow-lift); will-change: transform; }
+.loupe canvas { display: block; width: 100%; height: 100%; }
+.loupe::before, .loupe::after { content: ""; position: absolute; left: 50%; top: 50%; background: var(--color-ink); opacity: 0.6; translate: -50% -50%; }
+.loupe::before { width: 22px; height: 1px; } .loupe::after { width: 1px; height: 22px; }
+.sheet:not([hidden]) { animation: m-fade-in 0.45s var(--ease-out); }
+.plan__price span { animation: m-fade-in 0.35s var(--ease-out); }
+.js .close [data-slot] > img { scale: 1.08; transition: scale 2.6s var(--ease-out); }
+.js .close.is-in [data-slot] > img { scale: 1; }
+@media (prefers-reduced-motion: reduce) { .js .close [data-slot] > img { scale: 1; transition: none; } }
+
+/* motion: one shared layer, compositor only (opacity and translate), each piece runs once, from a visible default without script */
+.js [data-reveal], .js [data-stagger] > * { opacity: 0; translate: 0 var(--rise, 18px); transition: opacity 0.7s var(--ease-out), translate 0.7s var(--ease-out); transition-delay: var(--delay, 0ms); }
+.js [data-reveal].is-in, .js [data-stagger].is-in > * { opacity: 1; translate: 0 0; }
+@keyframes m-fade-in { from { opacity: 0; translate: 0 10px; } }
+@keyframes m-pop { 0% { opacity: 0; scale: 0.6; } 60% { opacity: 1; scale: 1.06; } 100% { scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal], .js [data-stagger] > * { opacity: 1; translate: none; transition: none; }
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js'); document.documentElement.lang = 'en-GB';</script>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav" aria-label="Main">
+  <a class="wordmark" href="#top" aria-label="Waymark home">
+    <svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle class="mark__disc" cx="12" cy="12" r="10.5"/><path class="mark__arrow" d="M7 13.2h6.6v3.3l4.9-4.5-4.9-4.5v3.3H7z"/></svg>
+    Waymark
+  </a>
+  <ul class="nav__links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#list">Work list</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a class="btn btn--sm" href="#start">Start free</a>
+</nav>
+
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="hero-h">
+    <div class="map" data-map>
+      <canvas aria-hidden="true"></canvas>
+      <div class="loupe" aria-hidden="true" hidden><canvas></canvas></div>
+      <ol class="pins" aria-label="Faults logged on one morning’s walk">
+        <li class="pin is-open" style="--x: 10%; --y: 52%"><span class="pin__mark" aria-hidden="true"><svg viewBox="0 0 18 18" width="18" height="18"><circle class="shape" cx="9" cy="9" r="7"/></svg></span><span class="pin__tag">Stile 14 <span class="num">07:40</span></span></li>
+        <li class="pin" style="--x: 30%; --y: 84.5%"><span class="pin__mark" aria-hidden="true"><svg viewBox="0 0 18 18" width="18" height="18"><circle class="shape" cx="9" cy="9" r="7"/></svg></span><span class="pin__tag">Gate 3 <span class="num">08:05</span></span></li>
+        <li class="pin" style="--x: 68%; --y: 83%"><span class="pin__mark" aria-hidden="true"><svg viewBox="0 0 18 18" width="18" height="18"><rect class="shape" x="4" y="4" width="10" height="10" transform="rotate(45 9 9)"/></svg></span><span class="pin__tag">Fingerpost down <span class="num">08:30</span></span></li>
+        <li class="pin pin--left" style="--x: 90%; --y: 50%"><span class="pin__mark" aria-hidden="true"><svg viewBox="0 0 18 18" width="18" height="18"><path class="shape" d="M9 2.5 16 15H2z"/></svg></span><span class="pin__tag">Ash across the path <span class="num">08:52</span></span></li>
+      </ol>
+    </div>
+    <div class="container hero__inner">
+      <div class="corridor" data-stagger="120">
+        <h1 id="hero-h">Every broken stile,<br class="br-wide"> on the map.</h1>
+        <p class="lead">Wardens log path faults on foot; rangers get the work list.</p>
+        <div class="actions">
+          <a class="btn btn--primary" href="#start">Start free</a>
+          <a class="btn" href="#list">See the work list</a>
+        </div>
+        <p class="terms">Free for wardens. No card needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="report" aria-labelledby="report-h">
+    <div class="container">
+      <div data-reveal class="head head--split">
+        <h2 id="report-h">Reports that say exactly where.</h2>
+        <p class="lead">One stile, as a walker’s email and as a Waymark entry.</p>
+      </div>
+      <div class="pair">
+        <figure class="pair__before" data-reveal>
+          <div class="mail">
+            <dl>
+              <div><dt>From</dt><dd>walker@example.com</dd></div>
+              <div><dt>Subject</dt><dd>Broken stile?</dd></div>
+            </dl>
+            <p>Hi, the stile past the church has a broken step. Second field, I think?</p>
+          </div>
+          <figcaption>An email from a walker</figcaption>
+        </figure>
+        <figure class="pair__after" data-reveal data-delay="220">
+          <article class="entry" aria-label="Sample Waymark entry">
+            <header class="entry__head">
+              <span class="entry__kind"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle class="shape" cx="9" cy="9" r="7"/></svg>Stile 14</span>
+              <span class="num">Tue 3 Nov</span>
+            </header>
+            <div class="entry__body notebook">
+              <p class="entry__time">07:40</p>
+              <dl class="cells" data-stagger="80" data-delay="520">
+                <div><dt>Path</dt><dd class="num">FP 12</dd></div>
+                <div><dt>Grid reference</dt><dd class="num">SD 9412 9803</dd></div>
+                <div class="cells__wide"><dt>Fault</dt><dd>Bottom step split</dd></div>
+                <div><dt>Logged by</dt><dd>Example Warden</dd></div>
+                <div><dt>Status</dt><dd><span class="chip chip--open">Open</span></dd></div>
+              </dl>
+            </div>
+            <div class="entry__keys notebook" aria-hidden="true"><span class="key">Add a note</span><span class="key">Mark fixed</span></div>
+          </article>
+          <figcaption>The same stile, logged in Waymark</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how" aria-labelledby="how-h">
+    <div class="container">
+      <div data-reveal class="head">
+        <h2 id="how-h">Three taps at the stile.</h2>
+        <p class="lead">The phone knows where you stand.</p>
+      </div>
+      <ol class="steps" data-stagger="140">
+        <li class="step">
+          <div class="step__ui">
+            <fieldset class="keys">
+              <legend class="visually-hidden">What needs fixing</legend>
+              <input type="radio" name="kind" id="k-stile" value="stile" checked><label for="k-stile">Stile</label>
+              <input type="radio" name="kind" id="k-gate" value="gate"><label for="k-gate">Gate</label>
+              <input type="radio" name="kind" id="k-bridge" value="bridge"><label for="k-bridge">Bridge</label>
+              <input type="radio" name="kind" id="k-sign" value="sign"><label for="k-sign">Sign</label>
+              <input type="radio" name="kind" id="k-surface" value="surface"><label for="k-surface">Surface</label>
+              <input type="radio" name="kind" id="k-tree" value="tree"><label for="k-tree">Tree</label>
+            </fieldset>
+          </div>
+          <h3>Pick what it is</h3>
+          <p>Six kinds cover most faults.</p>
+        </li>
+        <li class="step">
+          <div class="step__ui">
+            <fieldset class="chips" data-faults>
+              <legend>Fault</legend>
+              <input type="radio" name="fault" id="f-1" value="Step split" checked><label for="f-1">Step split</label>
+              <input type="radio" name="fault" id="f-2" value="Post rotten"><label for="f-2">Post rotten</label>
+              <input type="radio" name="fault" id="f-3" value="Too high"><label for="f-3">Too high</label>
+              <input type="radio" name="fault" id="f-4" value="Missing"><label for="f-4">Missing</label>
+            </fieldset>
+          </div>
+          <h3>Say what’s wrong</h3>
+          <p>Fitted to the kind.</p>
+        </li>
+        <li class="step">
+          <div class="step__ui">
+            <ul class="queue" aria-label="Sample entries waiting on the phone">
+              <li>Stile <span class="chip chip--saved">Saved</span></li>
+              <li>Gate <span class="chip chip--saved">Saved</span></li>
+              <li>Tree <span class="chip chip--saved">Saved</span></li>
+            </ul>
+          </div>
+          <h3>Walk on</h3>
+          <p>It sends when there’s signal.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--far" id="list" aria-labelledby="list-h">
+    <div class="container">
+      <div data-reveal class="head head--split">
+        <h2 id="list-h">The ranger gets one work list.</h2>
+        <p class="lead">Every open fault, with the grid reference to drive to.</p>
+      </div>
+      <div data-switch>
+        <div class="tabs" role="tablist" aria-label="Export format">
+          <button type="button" role="tab" id="t-list" aria-controls="p-list" aria-selected="true">Work list</button>
+          <button type="button" role="tab" id="t-geo" aria-controls="p-geo" aria-selected="false" tabindex="-1">GeoJSON</button>
+        </div>
+        <div class="sheet" role="tabpanel" id="p-list" aria-labelledby="t-list">
+          <div class="sheet__head"><p>FP 12 and FP 14</p><p class="num">3 Nov 2026</p></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Ref</th><th scope="col">Fault</th><th scope="col">Path</th><th scope="col">Grid ref</th><th scope="col">Status</th></tr></thead>
+              <tbody data-stagger="80">
+                <tr><th scope="row" class="num">WM-0142</th><td>Stile, step split</td><td class="num">FP 12</td><td class="num">SD 9412 9803</td><td><span class="chip chip--open">Open</span></td></tr>
+                <tr><th scope="row" class="num">WM-0143</th><td>Gate latch broken</td><td class="num">FP 12</td><td class="num">SD 9437 9768</td><td><span class="chip chip--open">Open</span></td></tr>
+                <tr><th scope="row" class="num">WM-0144</th><td>Fingerpost down</td><td class="num">FP 14</td><td class="num">SD 9481 9771</td><td><span class="chip chip--open">Open</span></td></tr>
+                <tr><th scope="row" class="num">WM-0131</th><td>Disc missing</td><td class="num">BW 3</td><td class="num">SD 9466 9842</td><td><span class="chip chip--fixed">Fixed 1 Nov</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="sheet" role="tabpanel" id="p-geo" aria-labelledby="t-geo">
+          <div class="sheet__head"><p>WM-0142 as GeoJSON</p><p class="num">waymark-fp12.geojson</p></div>
+<pre><code>{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [-2.0889, 54.3874] },
+  "properties": { "ref": "WM-0142", "path": "FP 12", "kind": "stile", "status": "open" }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--far" id="questions" aria-labelledby="qa-h">
+    <div class="container qa">
+      <h2 id="qa-h" data-reveal>What wardens ask first</h2>
+      <dl data-stagger="90">
+        <div><dt>Does it work with no signal?</dt><dd>Yes, entries wait on the phone.</dd></div>
+        <div><dt>Can walkers report faults?</dt><dd>Yes, through a link you share.</dd></div>
+        <div><dt>Which phones?</dt><dd>iPhone, Android and any browser.</dd></div>
+        <div><dt>Can we take our data?</dt><dd>Yes, as CSV or GeoJSON, any time.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section pricing" id="pricing" aria-labelledby="price-h">
+    <div class="container">
+      <div class="price-head">
+        <div>
+          <h2 id="price-h">One price per ranger team.</h2>
+          <p class="lead">Wardens never pay.</p>
+        </div>
+        <fieldset class="seg">
+          <legend class="visually-hidden">Billing period</legend>
+          <input type="radio" name="period" id="period-month" checked><label for="period-month">Monthly</label>
+          <input type="radio" name="period" id="period-year"><label for="period-year">Yearly</label>
+        </fieldset>
+      </div>
+      <div class="plans" data-stagger="110">
+        <div class="plan">
+          <div><h3>Warden</h3><p class="plan__for">For volunteers walking a patch</p></div>
+          <p class="plan__has">Logging, offline maps, photos</p>
+          <p class="plan__price">Free</p>
+          <a class="btn" href="#start">Start free</a>
+        </div>
+        <div class="plan">
+          <div><h3>Ranger team</h3><p class="plan__for">One ranger and up to 40 wardens</p></div>
+          <p class="plan__has">The work list and exports</p>
+          <p class="plan__price"><span class="monthly">£24<small>a month</small></span><span class="yearly">£240<small>a year</small></span></p>
+          <a class="btn" href="#start">Start a team</a>
+        </div>
+        <div class="plan">
+          <div><h3>District</h3><p class="plan__for">Several ranger teams</p></div>
+          <p class="plan__has">One map for the council</p>
+          <p class="plan__price"><span class="monthly">£90<small>a month</small></span><span class="yearly">£900<small>a year</small></span></p>
+          <a class="btn" href="#start">Start a district</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" data-reveal style="--rise: 0px" id="start" aria-labelledby="start-h">
+    <div class="close__photo" data-slot="close" data-alt="A footpath on your own patch in ordinary daylight, fields and walls at mid distance">
+      <img src="swaledale.jpg" width="1920" height="1440" alt="Fields parted by dry-stone walls, with stone field barns, on a green dale side" style="object-position: 50% 55%" loading="lazy">
+    </div>
+    <div class="close__scrim" aria-hidden="true"></div>
+    <div class="container close__inner">
+      <div class="close__copy" data-stagger="120" data-delay="300">
+        <h2 id="start-h">Start with one path.</h2>
+        <p class="lead">Add your wardens. The list fills as they walk.</p>
+        <form class="start" data-endpoint="" novalidate>
+          <div class="start__row">
+            <div class="field">
+              <label for="start-email">Work email</label>
+              <input id="start-email" name="email" type="email" autocomplete="email" inputmode="email" required>
+            </div>
+            <button class="btn btn--primary" type="submit">Start free</button>
+          </div>
+          <p class="start__help" id="start-help" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p class="footer__statement" data-reveal>Walk the path. Waymark keeps the list.</p>
+    <ul class="footer__links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#list">Work list</a></li>
+      <li><a href="#questions">Questions</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <div class="footer__small">
+      <p data-credits>Photograph: <a href="https://commons.wikimedia.org/wiki/File:2014_Fields_Swaledale_Gunnerside.jpg">Kreuzschnabel</a> (CC BY-SA 3.0, Wikimedia Commons).</p>
+      <p>Waymark is a made-up product, built as a Hallmark demo.</p>
+    </div>
+  </div>
+</footer>
+
+<script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
+<script>
+/* The survey: generated on load and on resize, never a picture. */
+(() => {
+  const map = document.querySelector('[data-map]');
+  const canvas = map && map.querySelector('canvas');
+  if (!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  const pins = [...map.querySelectorAll('.pin')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const landAll = () => pins.forEach((p) => p.classList.add('is-landed'));
+  setTimeout(landAll, 3200);
+
+  const probe = document.createElement('canvas'); probe.width = probe.height = 1;
+  const pctx = probe.getContext('2d', { willReadFrequently: true });
+  const style = getComputedStyle(document.documentElement);
+  const tone = (name) => { pctx.clearRect(0, 0, 1, 1); pctx.fillStyle = style.getPropertyValue(name).trim(); pctx.fillRect(0, 0, 1, 1); const d = pctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; };
+  const C = {};
+  ['--color-paper', '--color-paper-3', '--color-ink', '--color-muted', '--color-contour', '--color-water', '--color-hedge', '--color-grid-strong', '--color-accent', '--color-sheet'].forEach((n) => { C[n.replace('--color-', '')] = tone(n); });
+  const rgba = (c, a = 1) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
+
+  // seeded noise
+  const rng = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const r0 = rng(0x4c0cc0);
+  const P = new Uint8Array(512); for (let i = 0; i < 256; i++) P[i] = i;
+  for (let i = 255; i > 0; i--) { const j = Math.floor(r0() * (i + 1)); [P[i], P[j]] = [P[j], P[i]]; }
+  for (let i = 0; i < 256; i++) P[i + 256] = P[i];
+  const hash = (x, y) => P[(P[x & 255] + y) & 255] / 255;
+  const vnoise = (x, y) => { const ix = Math.floor(x), iy = Math.floor(y), fx = x - ix, fy = y - iy; const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy); const a = hash(ix, iy), b = hash(ix + 1, iy), c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+  const fbm = (x, y) => { let s = 0, amp = 0.5, f = 1; for (let i = 0; i < 4; i++) { s += amp * vnoise(x * f, y * f); f *= 2.03; amp *= 0.5; } return s; };
+
+  // the walk, the beck, the lane and the other rights of way, in map fractions
+  const ROUTE = [[0.075, 0.15], [0.11, 0.3], [0.1, 0.52], [0.12, 0.68], [0.19, 0.8], [0.3, 0.845], [0.44, 0.885], [0.57, 0.87], [0.68, 0.83], [0.79, 0.73], [0.9, 0.5], [0.885, 0.31], [0.93, 0.13]];
+  const STOPS = [2, 5, 8, 10];
+  const BECK = [[-0.02, 0.975], [0.14, 0.955], [0.29, 0.94], [0.44, 0.905], [0.56, 0.93], [0.71, 0.955], [0.86, 0.915], [1.02, 0.94]];
+  const LANE = [[-0.02, 0.1], [0.09, 0.115], [0.22, 0.085], [0.42, 0.07], [0.62, 0.085], [0.8, 0.065], [1.02, 0.08]];
+  const SIKE = [[0.538, 0.73], [0.522, 0.79], [0.506, 0.85], [0.494, 0.915]];
+  const OTHER = [
+    { pts: [[0.47, 0.07], [0.5, 0.22], [0.47, 0.4], [0.52, 0.6], [0.5, 0.88]], label: 'BW 3', at: [0.505, 0.2] },
+    { pts: [[1.02, 0.6], [0.94, 0.66], [0.79, 0.73]], label: 'FP 9', at: [0.955, 0.69] },
+  ];
+  const FIELDS = [['Church field', 0.19, 0.4, -0.05], ['Low pasture', 0.2, 0.68, 0.03], ['Barn field', 0.31, 0.2, -0.02], ['Top intake', 0.69, 0.19, 0.02], ['Long field', 0.8, 0.6, -0.04], ['Beck side', 0.6, 0.79, 0.02]];
+
+  const smooth = (pts, W, H, steps = 14) => {
+    const p = pts.map(([x, y]) => [x * W, y * H]); const out = [];
+    for (let i = 0; i < p.length - 1; i++) {
+      const p0 = p[Math.max(0, i - 1)], p1 = p[i], p2 = p[i + 1], p3 = p[Math.min(p.length - 1, i + 2)];
+      for (let s = 0; s < steps; s++) { const t = s / steps, t2 = t * t, t3 = t2 * t;
+        out.push([0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+                  0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)]); }
+    }
+    out.push(p[p.length - 1]); return out;
+  };
+  const line = (c, pts) => { c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); };
+
+  let base = null, routePts = [], routeLen = [], W = 0, H = 0, dpr = 1, drawn = false, grainTile = null;
+
+  function drawBase() {
+    const r = map.getBoundingClientRect();
+    W = Math.round(r.width); H = Math.round(r.height); dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    base = document.createElement('canvas'); base.width = W * dpr; base.height = H * dpr;
+    const c = base.getContext('2d'); c.scale(dpr, dpr);
+    const rand = rng(0x51e7);
+    const overlay = getComputedStyle(map).position === 'absolute';
+
+    c.fillStyle = rgba(C.paper); c.fillRect(0, 0, W, H);
+    // paper fibre and grain
+    if (!grainTile) { grainTile = document.createElement('canvas'); grainTile.width = grainTile.height = 220; const g = grainTile.getContext('2d'), gr = rng(0x9a1); for (let i = 0; i < 190; i++) { g.fillStyle = rgba(gr() < 0.5 ? C.ink : C.sheet, gr() * 0.05); g.fillRect(gr() * 220, gr() * 220, 1, 1); } }
+    c.fillStyle = c.createPattern(grainTile, 'repeat'); c.fillRect(0, 0, W, H);
+    c.lineWidth = 0.6;
+    for (let i = 0; i < (W * H) / 9000; i++) { const x = rand() * W, y = rand() * H, a = rand() * Math.PI; c.strokeStyle = rgba(C.ink, 0.035); c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(a) * 6, y + Math.sin(a) * 6 + 2, x + Math.cos(a) * 12, y + Math.sin(a) * 12); c.stroke(); }
+
+    // the kilometre grid
+    const km = 200, ox = (W / 2) % km, oy = (H / 2) % km;
+    c.strokeStyle = rgba(C['grid-strong'], 0.75); c.lineWidth = 1;
+    c.font = '500 11px "Red Hat Mono", ui-monospace, monospace'; c.fillStyle = rgba(C.muted, 0.75);
+    for (let x = ox, e = 94 - Math.floor(W / 2 / km); x < W; x += km, e++) { c.beginPath(); c.moveTo(x + 0.5, 0); c.lineTo(x + 0.5, H); c.stroke(); c.fillText(String(e), x + 4, H - 8); }
+    for (let y = oy, n = 98 + Math.floor(H / 2 / km); y < H; y += km, n--) { c.beginPath(); c.moveTo(0, y + 0.5); c.lineTo(W, y + 0.5); c.stroke(); c.fillText(String(n), 6, y - 5); }
+
+    // contours: a dale side rising away from the beck, traced by marching squares
+    const s = 7, cols = Math.ceil(W / s) + 2, rows = Math.ceil(H / s) + 2, h = new Float32Array(cols * rows);
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const x = i * s - W / 2, y = j * s - H / 2; h[j * cols + i] = 0.55 * fbm(x / 430 + 11.3, y / 430 + 4.7) + 0.95 * (1 - (j * s) / H); }
+    // one pass over the cells: each cell only traces the levels that cross it
+    const step = 0.04; let hmin = Infinity, hmax = -Infinity; for (let n = 0; n < h.length; n++) { if (h[n] < hmin) hmin = h[n]; if (h[n] > hmax) hmax = h[n]; }
+    const lv0 = Math.floor(hmin / step) + 1, lv1 = Math.floor(hmax / step), byLevel = new Map();
+    const CASES = [null, [[3, 2]], [[2, 1]], [[3, 1]], [[0, 1]], [[3, 0], [2, 1]], [[0, 2]], [[3, 0]], [[3, 0]], [[0, 2]], [[0, 1], [3, 2]], [[0, 1]], [[3, 1]], [[2, 1]], [[3, 2]], null];
+    for (let j = 0; j < rows - 1; j++) for (let i = 0; i < cols - 1; i++) {
+      const a = h[j * cols + i], b = h[j * cols + i + 1], d = h[(j + 1) * cols + i], e = h[(j + 1) * cols + i + 1];
+      const lo = Math.min(a, b, d, e), hi = Math.max(a, b, d, e), x = i * s, y = j * s;
+      for (let k = Math.floor(lo / step) + 1; k * step < hi; k++) {
+        const L = k * step, idx = (a > L ? 8 : 0) | (b > L ? 4 : 0) | (e > L ? 2 : 0) | (d > L ? 1 : 0), cs = CASES[idx];
+        if (!cs) continue;
+        const pt = (g) => g === 0 ? [x + s * (L - a) / (b - a), y] : g === 1 ? [x + s, y + s * (L - b) / (e - b)] : g === 2 ? [x + s * (L - d) / (e - d), y + s] : [x, y + s * (L - a) / (d - a)];
+        let list = byLevel.get(k); if (!list) byLevel.set(k, (list = []));
+        for (const [g1, g2] of cs) list.push([pt(g1), pt(g2)]);
+      }
+    }
+    for (let k = lv0; k <= lv1; k++) {
+      const heavy = k % 5 === 0, segs = byLevel.get(k) || [];
+      c.strokeStyle = rgba(C.contour, heavy ? 0.85 : 0.5); c.lineWidth = heavy ? 1.3 : 0.8;
+      c.beginPath(); segs.forEach(([p, q]) => { c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); }); c.stroke();
+      if (heavy) {
+        [0.035, 0.965].forEach((fx) => {
+          let best = null, bd = 1e9;
+          segs.forEach(([p, q]) => { const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2; const dd = Math.abs(mx - fx * W); if (dd < bd && my > 40 && my < H - 40) { bd = dd; best = [p, q]; } });
+          if (!best || bd > 30) return;
+          const [p, q] = best, ang = Math.atan2(q[1] - p[1], q[0] - p[0]), mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+          const label = String(180 + k * 10);
+          c.save(); c.translate(mx, my); c.rotate(Math.abs(ang) > Math.PI / 2 ? ang + Math.PI : ang);
+          c.font = '500 10px "Red Hat Text", ui-sans-serif, sans-serif'; const w = c.measureText(label).width;
+          c.fillStyle = rgba(C.paper); c.fillRect(-w / 2 - 3, -7, w + 6, 13); c.fillStyle = rgba(C.contour, 0.95); c.fillText(label, -w / 2, 3.5); c.restore();
+        });
+      }
+    }
+
+    // the beck and a pond
+    const beck = smooth(BECK, W, H);
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    c.strokeStyle = rgba(C.water, 0.28); c.lineWidth = 7; line(c, beck); c.stroke();
+    c.strokeStyle = rgba(C.water, 0.95); c.lineWidth = 2.2; line(c, beck); c.stroke();
+    const sike = smooth(SIKE, W, H);
+    c.strokeStyle = rgba(C.water, 0.85); c.lineWidth = 1.3; line(c, sike); c.stroke();
+    c.font = '500 12px "Red Hat Text", ui-sans-serif, sans-serif'; c.fillStyle = rgba(C.water); c.fillText('Beck', 0.79 * W, 0.965 * H);
+
+    // field boundaries: walls on the tops, hedges in the bottoms
+    const bands = [0.24, 0.37, 0.5, 0.63, 0.76];
+    const wob = (x, y0, k) => y0 * H + Math.sin(x / (150 + k * 23) + k * 1.7) * 0.016 * H + (fbm(x / 120, k * 3.1) - 0.5) * 0.02 * H;
+    const drawBoundary = (pts, hedge) => {
+      if (hedge) { c.fillStyle = rgba(C.hedge, 0.75); let acc = 0; for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; const d = Math.hypot(x1 - x0, y1 - y0); for (let t = acc; t < d; t += 5) { const f = t / d; c.beginPath(); c.arc(x0 + (x1 - x0) * f, y0 + (y1 - y0) * f, 1.15, 0, Math.PI * 2); c.fill(); } acc = (acc + 5 - (d % 5)) % 5; } }
+      else { c.strokeStyle = rgba(C.ink, 0.62); c.lineWidth = 1; line(c, pts); c.stroke(); }
+    };
+    bands.forEach((y0, k) => {
+      const pts = []; for (let x = -10; x <= W + 10; x += 12) pts.push([x, wob(x, y0, k)]);
+      drawBoundary(pts, y0 > 0.6);
+      if (k < bands.length - 1) {
+        for (let x = 60 + rand() * 120; x < W - 40; x += 170 + rand() * 190) {
+          const y1 = wob(x, y0, k), x2 = x + (rand() - 0.5) * 50, y2 = wob(x2, bands[k + 1], k + 1);
+          drawBoundary([[x, y1], [(x + x2) / 2 + (rand() - 0.5) * 8, (y1 + y2) / 2], [x2, y2]], y0 > 0.55);
+        }
+      }
+    });
+
+    // the lane, the hamlet and its church
+    const lane = smooth(LANE, W, H);
+    c.strokeStyle = rgba(C.ink, 0.75); c.lineWidth = 7; line(c, lane); c.stroke();
+    c.strokeStyle = rgba(C.paper); c.lineWidth = 5; line(c, lane); c.stroke();
+    const hatch = (x, y, w, hh, rot) => { c.save(); c.translate(x, y); c.rotate(rot); c.fillStyle = rgba(C['paper-3']); c.fillRect(-w / 2, -hh / 2, w, hh); c.strokeStyle = rgba(C.ink, 0.8); c.lineWidth = 1; c.strokeRect(-w / 2, -hh / 2, w, hh); c.beginPath(); for (let t = -w; t < w; t += 3.5) { c.moveTo(-w / 2 + t, -hh / 2); c.lineTo(-w / 2 + t + hh, hh / 2); } c.save(); c.rect(-w / 2, -hh / 2, w, hh); c.clip(); c.strokeStyle = rgba(C.ink, 0.35); c.stroke(); c.restore(); c.restore(); };
+    [[0.03, 0.15, 16, 10, 0.1], [0.055, 0.155, 12, 9, -0.05], [0.12, 0.155, 14, 10, 0.08], [0.16, 0.06, 18, 10, -0.1], [0.19, 0.12, 11, 9, 0.12]].forEach(([x, y, w, hh, rot]) => hatch(x * W, y * H, w, hh, rot));
+    hatch(0.087 * W, 0.165 * H, 26, 11, 0.05); hatch(0.073 * W, 0.165 * H, 9, 9, 0.05);
+    c.font = '500 11px "Red Hat Text", ui-sans-serif, sans-serif'; c.fillStyle = rgba(C.ink, 0.8); c.fillText('Church', 0.074 * W, 0.205 * H);
+
+    // other rights of way, fainter
+    c.setLineDash([7, 5]); c.lineWidth = 1.2; c.strokeStyle = rgba(C.ink, 0.38);
+    OTHER.forEach((o) => { line(c, smooth(o.pts, W, H)); c.stroke(); });
+    c.setLineDash([]);
+    c.font = '500 11px "Red Hat Mono", ui-monospace, monospace'; c.fillStyle = rgba(C.muted, 0.9);
+    OTHER.forEach((o) => c.fillText(o.label, o.at[0] * W, o.at[1] * H));
+    c.fillText('FP 12', 0.125 * W, 0.26 * H); c.fillText('FP 14', 0.905 * W, 0.42 * H);
+
+    // field names, set along their fields
+    c.font = '500 13px "Red Hat Text", ui-sans-serif, sans-serif'; c.fillStyle = rgba(C.muted, 0.85);
+    FIELDS.forEach(([name, x, y, rot]) => { c.save(); c.translate(x * W, y * H); c.rotate(rot); c.fillText(name, 0, 0); c.restore(); });
+
+    // two fold creases, lit from above
+    c.fillStyle = rgba(C.ink, 0.06); c.fillRect(Math.round(W * 0.34), 0, 1, H); c.fillRect(0, Math.round(H * 0.52), W, 1);
+    c.fillStyle = rgba(C.sheet, 0.7); c.fillRect(Math.round(W * 0.34) + 1, 0, 1, H); c.fillRect(0, Math.round(H * 0.52) + 1, W, 1);
+
+    // calm the paper under the corridor, only when the type sits on the map
+    if (overlay) {
+      const box = document.querySelector('.corridor').getBoundingClientRect();
+      const cx = box.left - r.left + box.width / 2, cy = box.top - r.top + box.height / 2, rx = box.width * 0.72 + 80, ry = box.height * 0.78 + 60;
+      c.save(); c.translate(cx, cy); c.scale(rx / ry, 1);
+      const g = c.createRadialGradient(0, 0, 0, 0, 0, ry);
+      g.addColorStop(0, rgba(C.paper, 0.9)); g.addColorStop(0.62, rgba(C.paper, 0.78)); g.addColorStop(1, rgba(C.paper, 0));
+      c.fillStyle = g; c.beginPath(); c.arc(0, 0, ry, 0, Math.PI * 2); c.fill(); c.restore();
+    }
+
+    // the walk
+    routePts = smooth(ROUTE, W, H, 24); routeLen = [0];
+    for (let i = 1; i < routePts.length; i++) routeLen.push(routeLen[i - 1] + Math.hypot(routePts[i][0] - routePts[i - 1][0], routePts[i][1] - routePts[i - 1][1]));
+    // a footbridge where the walk crosses the sike
+    const sk = smooth(SIKE, W, H); let bi = 0, bd = 1e9;
+    routePts.forEach((p, i) => sk.forEach((q) => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (d < bd) { bd = d; bi = i; } }));
+    if (bd < 12 && bi > 0 && bi < routePts.length - 1) {
+      const [px, py] = routePts[bi], a = Math.atan2(routePts[bi + 1][1] - routePts[bi - 1][1], routePts[bi + 1][0] - routePts[bi - 1][0]);
+      c.save(); c.translate(px, py); c.rotate(a); c.strokeStyle = rgba(C.ink, 0.85); c.lineWidth = 1.3; c.beginPath(); c.moveTo(-8, -5); c.lineTo(8, -5); c.moveTo(-8, 5); c.lineTo(8, 5); c.stroke(); c.restore();
+    }
+  }
+
+  function drawRoute(t) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(base, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const total = routeLen[routeLen.length - 1], upto = total * t; const pts = [];
+    for (let i = 0; i < routePts.length; i++) { if (routeLen[i] <= upto) pts.push(routePts[i]); else { const f = (upto - routeLen[i - 1]) / (routeLen[i] - routeLen[i - 1]); pts.push([routePts[i - 1][0] + (routePts[i][0] - routePts[i - 1][0]) * f, routePts[i - 1][1] + (routePts[i][1] - routePts[i - 1][1]) * f]); break; } }
+    if (pts.length < 2) return;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = rgba(C.accent, 0.32); ctx.lineWidth = 9; line(ctx, pts); ctx.stroke();
+    ctx.setLineDash([6, 4]); ctx.strokeStyle = rgba(C.ink, 0.95); ctx.lineWidth = 1.8; line(ctx, pts); ctx.stroke(); ctx.setLineDash([]);
+    const segs = ROUTE.length - 1;
+    STOPS.forEach((si, n) => { if (t >= si / segs - 0.01 && pins[n]) pins[n].classList.add('is-landed'); });
+    drawLoupe();
+  }
+
+  // the loupe reads straight from the drawn map, so it costs nothing until the pointer moves
+  const loupe = map.querySelector('.loupe'), lc = loupe && loupe.querySelector('canvas'), lctx = lc && lc.getContext('2d');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches, hero = map.closest('.hero');
+  const SIZE = 168, ZOOM = 1.9, L = { x: 0, y: 0, tx: 0, ty: 0, on: false, raf: 0 };
+  const restAt = () => { L.tx = ROUTE[2][0] * W; L.ty = ROUTE[2][1] * H; };
+  function drawLoupe() {
+    if (!L.on) return;
+    const s = SIZE / ZOOM;
+    lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, lc.width, lc.height);
+    lctx.drawImage(canvas, (L.x - s / 2) * dpr, (L.y - s / 2) * dpr, s * dpr, s * dpr, 0, 0, lc.width, lc.height);
+    loupe.style.transform = `translate(${L.x - SIZE / 2}px, ${L.y - SIZE / 2}px)`;
+  }
+  function glide() { const dx = L.tx - L.x, dy = L.ty - L.y, k = reduce ? 1 : 0.14; L.x += dx * k; L.y += dy * k; drawLoupe(); L.raf = Math.abs(dx) + Math.abs(dy) > 0.5 ? requestAnimationFrame(glide) : 0; }
+  const kick = () => { if (L.on && !L.raf) L.raf = requestAnimationFrame(glide); };
+  function setupLoupe() {
+    L.on = !!(lctx && fine && getComputedStyle(map).position === 'absolute');
+    if (loupe) loupe.hidden = !L.on;
+    if (!L.on) return;
+    lc.width = lc.height = Math.round(SIZE * dpr);
+    restAt(); if (!L.x) { L.x = L.tx; L.y = L.ty; }
+    drawLoupe();
+  }
+  if (hero) {
+    hero.addEventListener('pointermove', (e) => { if (!L.on || e.pointerType !== 'mouse') return; const r = map.getBoundingClientRect(); L.tx = e.clientX - r.left; L.ty = e.clientY - r.top; kick(); });
+    hero.addEventListener('pointerleave', () => { if (!L.on) return; restAt(); kick(); });
+  }
+
+  const fontsReady = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load('500 13px "Red Hat Text"'), document.fonts.load('500 11px "Red Hat Mono"')]).catch(() => {}) : Promise.resolve();
+  const run = (animate) => {
+    drawBase(); setupLoupe();
+    if (!animate || reduce) { drawRoute(1); landAll(); drawn = true; return; }
+    const t0 = performance.now(), dur = 1800;
+    const frame = (now) => { const t = Math.min(1, (now - t0) / dur); drawRoute(1 - Math.pow(1 - t, 3)); if (t < 1) requestAnimationFrame(frame); else drawn = true; };
+    requestAnimationFrame(frame);
+  };
+  fontsReady.then(() => {
+    run(true);
+    let queued = false, lastW = W, lastH = H;
+    new ResizeObserver(() => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; const r = map.getBoundingClientRect(); if (Math.round(r.width) === lastW && Math.round(r.height) === lastH) return; lastW = Math.round(r.width); lastH = Math.round(r.height); run(false); }); }).observe(map);
+  });
+})();
+
+/* Step two follows step one: the faults fit the kind. */
+(() => {
+  const set = document.querySelector('[data-faults]');
+  if (!set) return;
+  const FAULTS = {
+    stile: ['Step split', 'Post rotten', 'Too high', 'Missing'],
+    gate: ['Latch broken', 'Won’t close', 'Hinge gone', 'Locked'],
+    bridge: ['Handrail loose', 'Boards rotten', 'Washed out', 'Blocked'],
+    sign: ['Post down', 'Arrow missing', 'Points wrong', 'Hidden'],
+    surface: ['Waterlogged', 'Eroded', 'Ploughed out', 'Overgrown'],
+    tree: ['Across the path', 'Leaning', 'Branches low', 'Roots lifted'],
+  };
+  document.querySelectorAll('input[name="kind"]').forEach((k) => k.addEventListener('change', () => {
+    const list = FAULTS[k.value];
+    set.querySelectorAll('input').forEach((input, i) => { input.value = list[i]; input.checked = i === 0; const lab = set.querySelector(`label[for="${input.id}"]`); lab.textContent = list[i]; if (lab.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) lab.animate([{ opacity: 0, translate: '0 6px' }, { opacity: 1, translate: '0 0' }], { duration: 320, delay: i * 45, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' }); });
+  }));
+})();
+
+/* The work list and its export, as tabs; without script both show. */
+(() => {
+  const sw = document.querySelector('[data-switch]');
+  if (!sw) return;
+  const tabs = [...sw.querySelectorAll('[role="tab"]')];
+  const show = (tab, focus) => { tabs.forEach((t) => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; }); if (focus) tab.focus(); };
+  tabs.forEach((t, i) => { t.addEventListener('click', () => show(t)); t.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true); } }); });
+  show(tabs[0]);
+})();
+
+/* A form that posts nowhere yet. */
+document.querySelectorAll('form[data-endpoint]').forEach((form) => {
+  const input = form.querySelector('input'), help = form.querySelector('[aria-live]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ok = input.checkValidity();
+    input.toggleAttribute('aria-invalid', !ok);
+    if (!ok) { input.setAttribute('aria-describedby', help.id); help.textContent = 'That address looks incomplete. Write it as name@example.com.'; input.focus(); return; }
+    if (!form.dataset.endpoint) { help.textContent = 'Nothing was sent: this demo form is not connected.'; return; }
+    fetch(form.dataset.endpoint, { method: 'POST', body: new FormData(form) })
+      .then((r) => { help.textContent = r.ok ? 'Check ' + input.value.trim() + ' for your sign-in link.' : 'That did not go through. Try again in a minute.'; })
+      .catch(() => { help.textContent = 'That did not go through. Try again in a minute.'; });
+  });
+});
+</script>
+<script>
+/* Reveals: each [data-reveal] and each child of [data-stagger] rises in once, when it is seen. */
+(() => {
+  const els = [...document.querySelectorAll('[data-reveal], [data-stagger]')];
+  els.forEach((el) => {
+    if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay + 'ms');
+    if (el.hasAttribute('data-stagger')) { const step = +el.dataset.stagger || 90, base = +(el.dataset.delay || 0); [...el.children].forEach((c, i) => c.style.setProperty('--delay', (base + i * step) + 'ms')); }
+  });
+  const show = (el) => el.classList.add('is-in');
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(show); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+  els.forEach((el) => io.observe(el));
+  addEventListener('beforeprint', () => els.forEach(show));
+})();
+</script>
+</body>
+</html>
