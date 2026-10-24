@@ -1,0 +1,1433 @@
+<title>Folders UI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap">
+<style>
+/* Layout: framed app shell. Sidebar tree beside a main pane; folder cards scroll sideways above a sortable files table.
+   Single dark look on purpose, after the Folders UI concept by David (@david_visuals_). */
+:root {
+  color-scheme: dark;
+
+  --canvas: #2a2a2d;
+  --panel: #111113;
+  --surface: #151517;
+  --raise: #1b1b1e;
+  --raise-2: #232327;
+  --line: #252529;
+  --line-strong: #323238;
+  --ink: #f2f2f4;
+  --ink-2: #a2a2a9;
+  --ink-3: #6c6c74;
+  --accent: #3b7cff;
+  --accent-hover: #5a92ff;
+  --accent-ink: #93b6ff;
+  --accent-soft: #19295a;
+  --on-accent: #ffffff;
+  --scrim: rgba(6, 6, 8, 0.62);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --toast: #26262b;
+  --mix-dark: #000000;
+  --mix-light: #ffffff;
+
+  --font-ui: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* folder colors */
+  --f-gray: #8d8d95;
+  --f-purple: #8a7ee2;
+  --f-lavender: #b9b0f0;
+  --f-yellow: #f4c544;
+  --f-periwinkle: #8fa3ff;
+  --f-blue: #2f6fe8;
+  --f-orange: #e65a32;
+  --f-teal: #4db5a7;
+  --f-green: #5bbf72;
+  --f-pink: #e57fb0;
+
+  /* avatars */
+  --av-brown-bg: #3a322b; --av-brown: #dcc4a8;
+  --av-green-bg: #19372a; --av-green: #7fd69a;
+  --av-purple-bg: #29244f; --av-purple: #aa9eff;
+  --av-blue-bg: #1b2b4d; --av-blue: #93b6ff;
+  --av-teal-bg: #163834; --av-teal: #7ad6c8;
+  --av-orange-bg: #44281b; --av-orange: #ffae87;
+
+  /* illustration materials */
+  --paper: #f8f8fa;
+  --paper-shade: #e2e3e8;
+  --paper-line: #c7c9d1;
+  --sheen: rgba(255, 255, 255, 0.2);
+  --sheen-line: rgba(255, 255, 255, 0.28);
+  --pill: rgba(255, 255, 255, 0.17);
+  --pill-ink: #ffffff;
+  --pill-light: rgba(255, 255, 255, 0.5);
+  --pill-light-ink: #3a2a00;
+  --pill-dark: #18181a;
+  --glass-back-1: #40534f;
+  --glass-back-2: #2a3634;
+  --glass-1: rgba(216, 236, 233, 0.58);
+  --glass-2: rgba(124, 154, 151, 0.34);
+  --glass-3: rgba(66, 88, 86, 0.62);
+  --brand-back: #2c66f0;
+  --brand-1: #3f88ff;
+  --brand-2: #1c58ee;
+  --brand-glyph: #b1ceff;
+  --brand-card-1: #6a61f4;
+  --brand-card-2: #ffc93c;
+  --zip-back: #29292c;
+  --zip-1: #343438;
+  --zip-2: #232326;
+  --zip-teeth: #4c4c52;
+  --zip-pull-1: #9a9aa1;
+  --zip-pull-2: #5e5e64;
+  --app-1: #34c38f;
+  --app-2: #ff8a3d;
+  --app-3: #8b7cff;
+  --screen-bar: #dbe4ff;
+  --screen-block: #9db8ff;
+  --sticky: #fff1a8;
+  --tape: #2b2b30;
+  --tape-label: #ffd9c9;
+  --wave: rgba(255, 255, 255, 0.82);
+}
+
+* { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; }
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--canvas);
+  color: var(--ink);
+  font: 400 14px/1.45 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+table { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ic { width: 18px; height: 18px; flex: none; stroke-width: 1.75; }
+.ic-sm { width: 15px; height: 15px; flex: none; stroke-width: 2; }
+
+/* ---------- shell ---------- */
+.shell {
+  height: 100%;
+  padding-block: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 40px 90px -40px var(--shadow);
+}
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 12px 16px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.workspace {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  text-align: left;
+}
+.workspace:hover { background: var(--raise); }
+.ws-mark {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--raise);
+  border: 1px solid var(--line-strong);
+  font-size: 13px; font-weight: 600;
+}
+.ws-text { display: grid; flex: 1; min-width: 0; }
+.ws-name { font-size: 15px; font-weight: 500; }
+.ws-sub { font-size: 12.5px; color: var(--ink-2); }
+.workspace .ic { color: var(--ink-3); }
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  margin-top: 12px;
+  padding: 0 8px 0 12px;
+  border-radius: 12px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 14px;
+}
+.search:hover { border-color: var(--line-strong); color: var(--ink-2); }
+kbd {
+  margin-left: auto;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--raise-2);
+  color: var(--ink-2);
+  font: 500 11px/1.4 var(--font-mono);
+}
+
+.nav { display: grid; gap: 2px; margin-top: 12px; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  text-align: left;
+}
+.nav-item .ic { color: var(--ink-2); }
+.nav-item:hover { background: var(--raise); }
+.badge {
+  display: grid; place-items: center;
+  min-width: 20px; height: 20px;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 11.5px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.kb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding: 0 4px 4px 12px;
+}
+.kb-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.kb-label:hover { color: var(--ink-2); }
+.icon-btn {
+  display: grid; place-items: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  color: var(--ink-2);
+}
+.icon-btn:hover { background: var(--raise); color: var(--ink); }
+
+.tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+.tree ul { margin-left: 15px; padding-left: 8px; border-left: 1px solid var(--line); }
+.tree li { display: grid; gap: 2px; }
+.tree ul { display: grid; gap: 2px; }
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding-left: 4px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+.row:hover { background: var(--raise); }
+.row.is-current { background: var(--raise-2); border-color: var(--line-strong); }
+.row.drop-hot { border-color: var(--accent); background: var(--accent-soft); }
+.twisty {
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  color: var(--ink-3);
+  flex: none;
+}
+.twisty:hover { color: var(--ink); }
+.twisty svg { transition: transform 0.2s ease; }
+.twisty[aria-expanded="false"] svg { transform: rotate(-90deg); }
+.twisty.leaf { visibility: hidden; }
+.row-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 12px 0 6px;
+  color: var(--ink-2);
+  text-align: left;
+}
+.row:hover .row-btn, .row.is-current .row-btn, .tree > li > .row .row-btn { color: var(--ink); }
+.row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14.5px; }
+.row-count { font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.fi { width: 19px; height: 15px; flex: none; color: var(--fc); }
+
+.credit {
+  margin: auto 0 0;
+  padding: 24px 12px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.credit a { color: var(--ink-2); text-underline-offset: 2px; }
+.credit a:hover { color: var(--ink); }
+
+.scrim { display: none; }
+
+/* ---------- main ---------- */
+.main {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 20px 0 36px;
+  border-bottom: 1px solid var(--line);
+}
+.menu-btn { display: none; }
+.crumbs {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  margin: 0; padding: 0;
+  list-style: none;
+  font-size: 15px;
+  overflow: hidden;
+}
+.crumbs li { display: flex; align-items: center; min-width: 0; flex: none; }
+.crumbs li:last-child { flex: 0 1 auto; }
+.crumbs .sep { color: var(--ink-3); margin: 0 8px; }
+.crumb {
+  max-width: 220px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--ink-2);
+  border-radius: 6px;
+}
+.crumb:hover { color: var(--ink); }
+.crumb[aria-current="page"] { color: var(--ink); cursor: default; max-width: none; }
+.crumbs li.drop-hot .crumb { color: var(--accent-ink); }
+
+.actions { display: flex; gap: 8px; flex: none; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--raise);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.btn:hover { background: var(--raise-2); }
+.btn .ic { width: 16px; height: 16px; }
+.btn-primary { background: var(--accent); border-color: transparent; color: var(--on-accent); }
+.btn-primary:hover { background: var(--accent-hover); }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 34px 36px 56px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.sec { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+h2 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; }
+.sec-count { font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.hint { margin-left: auto; font-size: 12.5px; color: var(--ink-3); }
+@media (pointer: coarse) { .hint { display: none; } }
+
+/* ---------- folder cards ---------- */
+.strip {
+  display: flex;
+  gap: 12px;
+  margin: -6px -6px 0;
+  padding: 6px 6px 14px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.card { flex: none; width: 264px; scroll-snap-align: start; border-radius: 22px; }
+.card-hit {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 18px 16px 22px;
+  border-radius: 22px;
+  border: 1px solid transparent;
+  text-align: center;
+}
+.card-hit:hover, .card-hit:focus-visible, .card.is-renaming .card-hit { background: var(--raise); }
+.card.drop-hot .card-hit { background: var(--accent-soft); border-color: var(--accent); }
+.card-name {
+  max-width: 100%;
+  margin-top: 12px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 16.5px; font-weight: 500;
+}
+.card-meta { font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.rename {
+  width: 100%;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: var(--panel);
+  color: var(--ink);
+  font: 500 16px var(--font-ui);
+  text-align: center;
+  outline: none;
+}
+.empty-note {
+  margin: 0;
+  padding: 28px 24px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 18px;
+  color: var(--ink-2);
+  width: 100%;
+}
+
+/* folder illustration: 232 x 176 box; back, items and front are layered */
+.art {
+  position: relative;
+  width: 232px; height: 176px;
+  flex: none;
+  pointer-events: none;
+  --back-a: color-mix(in oklab, var(--fc) 70%, var(--mix-dark));
+  --back-b: color-mix(in oklab, var(--fc) 50%, var(--mix-dark));
+  --front: linear-gradient(180deg, color-mix(in oklab, var(--fc) 82%, var(--mix-light)), var(--fc) 55%, color-mix(in oklab, var(--fc) 80%, var(--mix-dark)));
+}
+.art > * { position: absolute; display: block; }
+.art-shadow {
+  left: 28px; right: 28px; bottom: -6px; height: 22px;
+  border-radius: 50%;
+  background: var(--shadow);
+  filter: blur(12px);
+}
+.art-back {
+  inset: 0;
+  clip-path: path("M 8 24 Q 8 8 24 8 L 78 8 C 90 8 92 22 106 22 L 208 22 Q 224 22 224 38 L 224 150 Q 224 166 208 166 L 24 166 Q 8 166 8 150 Z");
+  background: linear-gradient(180deg, var(--back-a), var(--back-b));
+}
+.art-items { inset: 0; }
+.art-items > * { position: absolute; display: block; transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.art-front {
+  inset: 0;
+  clip-path: path("M 2 92 Q 2 76 18 76 L 96 76 C 108 76 110 62 124 62 L 214 62 Q 230 62 230 78 L 230 156 Q 230 172 214 172 L 18 172 Q 2 172 2 156 Z");
+  background: var(--front);
+  transform-origin: 50% 100%;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.art-front::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--sheen), transparent 46%); }
+.art-front > * { position: absolute; }
+.card-hit:hover .art-front, .card-hit:focus-visible .art-front, .card.drop-hot .art-front {
+  transform: perspective(640px) rotateX(-16deg);
+}
+
+.pill {
+  right: 14px; bottom: 14px;
+  display: flex; align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--pill);
+  color: var(--pill-ink);
+  font-size: 13px; font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.stack { left: 14px; bottom: 13px; display: flex; padding-left: 8px; }
+.stack .av { width: 30px; height: 30px; margin-left: -8px; font-size: 12.5px; border: 1.5px solid var(--sheen-line); }
+
+.paper {
+  width: 92px; height: 112px;
+  border-radius: 10px;
+  background:
+    linear-gradient(var(--paper-line), var(--paper-line)) 14px 22px / 46px 4px no-repeat,
+    linear-gradient(var(--paper-line), var(--paper-line)) 14px 34px / 62px 4px no-repeat,
+    linear-gradient(var(--paper-line), var(--paper-line)) 14px 46px / 38px 4px no-repeat,
+    linear-gradient(200deg, var(--paper) 55%, var(--paper-shade));
+}
+
+/* glass: Onboarding */
+.art-glass { --back-a: var(--glass-back-1); --back-b: var(--glass-back-2); --front: linear-gradient(180deg, var(--glass-1), var(--glass-2) 55%, var(--glass-3)); }
+.art-glass .art-front { -webkit-backdrop-filter: blur(9px) saturate(1.3); backdrop-filter: blur(9px) saturate(1.3); }
+.art-glass .p1 { left: 42px; top: 14px; transform: rotate(-9deg); }
+.art-glass .p2 { left: 104px; top: 20px; transform: rotate(7deg); }
+.card-hit:hover .art-glass .p1, .card.drop-hot .art-glass .p1, .card-hit:focus-visible .art-glass .p1 { transform: translate(-6px, -14px) rotate(-14deg); }
+.card-hit:hover .art-glass .p2, .card.drop-hot .art-glass .p2, .card-hit:focus-visible .art-glass .p2 { transform: translate(8px, -12px) rotate(12deg); }
+
+/* brand: Design System */
+.art-brand { --back-a: var(--brand-back); --back-b: var(--brand-2); --front: linear-gradient(180deg, var(--brand-1), var(--brand-2)); }
+.chip { border-radius: 12px; }
+.chip-1 { left: 32px; top: 40px; width: 66px; height: 80px; background: var(--brand-card-1); transform: rotate(-16deg); }
+.chip-aa {
+  left: 82px; top: 16px; width: 72px; height: 92px;
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--brand-back);
+  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
+  text-align: center;
+  padding-top: 12px;
+  transform: rotate(-2deg);
+}
+.chip-2 { left: 140px; top: 36px; width: 64px; height: 80px; background: var(--brand-card-2); transform: rotate(12deg); }
+.card-hit:hover .chip-1, .card.drop-hot .chip-1, .card-hit:focus-visible .chip-1 { transform: translate(-8px, -10px) rotate(-22deg); }
+.card-hit:hover .chip-aa, .card.drop-hot .chip-aa, .card-hit:focus-visible .chip-aa { transform: translateY(-14px) rotate(-2deg); }
+.card-hit:hover .chip-2, .card.drop-hot .chip-2, .card-hit:focus-visible .chip-2 { transform: translate(8px, -10px) rotate(18deg); }
+.glyph { left: 0; right: 0; top: 76px; text-align: center; font-size: 76px; line-height: 1; font-weight: 600; color: var(--brand-glyph); letter-spacing: -0.04em; }
+.rule { left: 28px; right: 28px; bottom: 20px; height: 1px; background: var(--sheen-line); }
+.pill-top { top: 72px; bottom: auto; }
+
+/* zip: archives */
+.art-zip { --back-a: var(--zip-back); --back-b: var(--zip-2); --front: linear-gradient(180deg, var(--zip-1), var(--zip-2)); }
+.zip-track {
+  left: 19px; top: 104px; bottom: 16px; width: 10px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(180deg, var(--zip-teeth) 0 3px, transparent 3px 6px);
+}
+.zip-pull {
+  left: 14px; top: 84px; width: 20px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--zip-pull-1), var(--zip-pull-2));
+}
+.zip-pull::after { content: ""; position: absolute; left: 6px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--zip-2); }
+.pill-dark { background: var(--pill-dark); border: 1px solid var(--line-strong); color: var(--ink); font-weight: 600; letter-spacing: 0.02em; }
+
+/* docs: Documents */
+.art-docs .p1 { left: 38px; top: 18px; transform: rotate(-7deg); }
+.art-docs .p2 { left: 104px; top: 24px; transform: rotate(6deg); }
+.art-docs .sticky { left: 146px; top: 12px; width: 46px; height: 46px; border-radius: 6px; background: var(--sticky); transform: rotate(12deg); }
+.card-hit:hover .art-docs .p1, .card.drop-hot .art-docs .p1, .card-hit:focus-visible .art-docs .p1 { transform: translate(-6px, -12px) rotate(-12deg); }
+.card-hit:hover .art-docs .p2, .card.drop-hot .art-docs .p2, .card-hit:focus-visible .art-docs .p2 { transform: translate(4px, -10px) rotate(9deg); }
+.card-hit:hover .art-docs .sticky, .card.drop-hot .art-docs .sticky, .card-hit:focus-visible .art-docs .sticky { transform: translate(6px, -14px) rotate(20deg); }
+.art-docs .pill { background: var(--pill-light); color: var(--pill-light-ink); }
+
+/* apps: Integrations */
+.tile { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; }
+.tile::after { content: ""; width: 20px; height: 20px; border: 4px solid var(--paper); }
+.tile-1 { left: 44px; top: 30px; background: var(--app-1); transform: rotate(-10deg); }
+.tile-1::after { border-radius: 50%; }
+.tile-2 { left: 92px; top: 16px; background: var(--app-2); }
+.tile-2::after { border-radius: 6px; }
+.tile-3 { left: 140px; top: 32px; background: var(--app-3); transform: rotate(10deg); }
+.tile-3::after { width: 24px; height: 12px; border-radius: 999px; }
+.card-hit:hover .tile-1, .card.drop-hot .tile-1, .card-hit:focus-visible .tile-1 { transform: translate(-6px, -12px) rotate(-16deg); }
+.card-hit:hover .tile-2, .card.drop-hot .tile-2, .card-hit:focus-visible .tile-2 { transform: translateY(-16px); }
+.card-hit:hover .tile-3, .card.drop-hot .tile-3, .card-hit:focus-visible .tile-3 { transform: translate(6px, -12px) rotate(16deg); }
+
+/* screens: design work */
+.screen {
+  width: 104px; height: 80px;
+  border-radius: 10px;
+  background:
+    linear-gradient(var(--screen-bar), var(--screen-bar)) 0 0 / 100% 14px no-repeat,
+    linear-gradient(var(--screen-block), var(--screen-block)) 10px 24px / 38px 30px no-repeat,
+    linear-gradient(var(--paper-line), var(--paper-line)) 56px 26px / 36px 4px no-repeat,
+    linear-gradient(var(--paper-line), var(--paper-line)) 56px 36px / 26px 4px no-repeat,
+    var(--paper);
+}
+.screen-1 { left: 28px; top: 26px; transform: rotate(-8deg); }
+.screen-2 { left: 100px; top: 14px; transform: rotate(6deg); }
+.card-hit:hover .screen-1, .card.drop-hot .screen-1, .card-hit:focus-visible .screen-1 { transform: translate(-6px, -12px) rotate(-12deg); }
+.card-hit:hover .screen-2, .card.drop-hot .screen-2, .card-hit:focus-visible .screen-2 { transform: translate(6px, -12px) rotate(10deg); }
+
+/* audio: interviews */
+.tape {
+  left: 56px; top: 18px; width: 120px; height: 78px;
+  border-radius: 10px;
+  background: linear-gradient(var(--tape-label), var(--tape-label)) 10px 10px / 100px 32px no-repeat, var(--tape);
+  transform: rotate(-4deg);
+}
+.tape::before, .tape::after {
+  content: ""; position: absolute; top: 15px;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 5px solid var(--tape);
+  background: var(--paper);
+}
+.tape::before { left: 26px; }
+.tape::after { right: 26px; }
+.card-hit:hover .tape, .card.drop-hot .tape, .card-hit:focus-visible .tape { transform: translateY(-16px) rotate(-8deg); }
+.wave { left: 24px; right: 24px; top: 94px; height: 36px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+.wave i { display: block; width: 3px; border-radius: 2px; background: var(--wave); }
+
+/* plain */
+.art-plain .p1 { left: 70px; top: 18px; transform: rotate(-4deg); }
+.card-hit:hover .art-plain .p1, .card.drop-hot .art-plain .p1, .card-hit:focus-visible .art-plain .p1 { transform: translateY(-14px) rotate(-8deg); }
+
+/* ---------- files table ---------- */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--raise);
+}
+.files { width: 100%; min-width: 600px; border-collapse: collapse; }
+.files th {
+  height: 54px;
+  padding: 0 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.files th:first-child, .files td:first-child { padding-left: 24px; }
+.files th:last-child, .files td:last-child { padding-right: 24px; text-align: right; }
+.th-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; }
+.th-btn:hover { color: var(--ink); }
+.th-btn .ic-sm { opacity: 0; }
+th[aria-sort] .th-btn { color: var(--ink); }
+th[aria-sort] .th-btn .ic-sm { opacity: 1; }
+.files td {
+  height: 60px;
+  padding: 0 20px;
+  border-top: 1px solid var(--line);
+  white-space: nowrap;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.files tbody tr { cursor: grab; }
+.files tbody tr:hover td { background: var(--raise-2); }
+.files tbody tr.dragging { opacity: 0.45; }
+.files tbody tr.flash td { animation: flash 2.2s ease-out; }
+@keyframes flash { 0%, 35% { background: var(--accent-soft); } 100% { background: transparent; } }
+.c-name { width: 100%; max-width: 0; }
+.name-wrap { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.file-ic { color: var(--ink-2); }
+.name-text { overflow: hidden; text-overflow: ellipsis; color: var(--ink); font-size: 15px; }
+.by { display: flex; align-items: center; gap: 12px; }
+.av {
+  display: grid; place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--avb);
+  color: var(--avf);
+  border: 1px solid var(--line-strong);
+  font-size: 12px; font-weight: 500;
+  flex: none;
+}
+.by-email { color: var(--ink); }
+.tone-brown { --avb: var(--av-brown-bg); --avf: var(--av-brown); }
+.tone-green { --avb: var(--av-green-bg); --avf: var(--av-green); }
+.tone-purple { --avb: var(--av-purple-bg); --avf: var(--av-purple); }
+.tone-blue { --avb: var(--av-blue-bg); --avf: var(--av-blue); }
+.tone-teal { --avb: var(--av-teal-bg); --avf: var(--av-teal); }
+.tone-orange { --avb: var(--av-orange-bg); --avf: var(--av-orange); }
+.files tr.empty td { height: 120px; text-align: center; cursor: default; white-space: normal; }
+.files tr.empty:hover td { background: transparent; }
+
+.drop-veil {
+  position: absolute;
+  inset: 76px 12px 12px;
+  z-index: 5;
+  display: grid; place-items: center;
+  border: 2px dashed var(--accent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--ink);
+  font-size: 16px;
+  pointer-events: none;
+  text-align: center;
+  padding: 0 16px;
+}
+
+/* ---------- search palette ---------- */
+.palette-scrim {
+  position: fixed; inset: 0; z-index: 60;
+  display: grid; align-items: start; justify-items: center;
+  padding: 12vh max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
+  background: var(--scrim);
+}
+.palette {
+  width: min(560px, 100%);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--line-strong);
+  background: var(--raise);
+  box-shadow: 0 40px 90px -20px var(--shadow);
+}
+.palette-input { display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 14px 0 16px; border-bottom: 1px solid var(--line); color: var(--ink-3); }
+.palette-input input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--ink); font: 400 15.5px var(--font-ui); }
+.palette-input input::placeholder { color: var(--ink-3); }
+.palette-input kbd { margin-left: 0; }
+.results { list-style: none; margin: 0; padding: 6px; max-height: min(380px, 52vh); overflow-y: auto; }
+.res-group { padding: 10px 12px 4px; font-size: 12px; color: var(--ink-3); }
+.result { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 9px 12px; border-radius: 10px; cursor: pointer; }
+.result[aria-selected="true"] { background: var(--raise-2); }
+.result .file-ic { width: 17px; height: 17px; }
+.res-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.res-name mark { background: none; color: var(--accent-ink); }
+.res-sub { margin-left: auto; padding-left: 12px; flex: none; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--ink-3); }
+.res-empty { padding: 22px 12px; color: var(--ink-2); }
+.palette-foot { display: flex; gap: 18px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); }
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed; left: 50%; z-index: 70;
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 14px;
+  max-width: calc(100% - 32px);
+  padding: 10px 10px 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--toast);
+  box-shadow: 0 20px 50px -16px var(--shadow);
+  font-size: 13.5px;
+  transform: translateX(-50%);
+}
+.toast.in { animation: toast-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes toast-in { from { transform: translate(-50%, 12px); opacity: 0; } }
+#toast-msg { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toast button { flex: none; padding: 4px 10px; border-radius: 8px; color: var(--accent-ink); font-weight: 500; }
+.toast button:hover { background: var(--raise-2); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 880px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .sidebar {
+    position: fixed; z-index: 40;
+    top: 0; bottom: 0; left: 0;
+    width: min(300px, 86vw);
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    transform: translateX(-105%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 30px 0 60px -30px var(--shadow);
+  }
+  .app.nav-open .sidebar { transform: none; }
+  .app.nav-open .scrim { display: block; position: fixed; inset: 0; z-index: 39; background: var(--scrim); }
+  .menu-btn { display: grid; margin-left: -6px; }
+  .topbar { padding: 0 14px 0 16px; gap: 8px; }
+  .content { padding: 26px 18px 48px; gap: 36px; }
+}
+@media (max-width: 640px) {
+  .shell { padding-block: 10px; }
+  .app { border-radius: 14px; }
+  .btn { width: 36px; padding: 0; justify-content: center; }
+  .btn span { display: none; }
+  .crumbs .far { display: none; }
+  .crumb { max-width: 120px; }
+  .files { min-width: 0; }
+  .c-date, .by-email { display: none; }
+  .files th, .files td { padding: 0 12px; }
+  .files th:first-child, .files td:first-child { padding-left: 16px; }
+  .files th:last-child, .files td:last-child { padding-right: 16px; }
+  h2 { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="shell">
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar" aria-label="Workspace">
+      <button class="workspace" id="ws-btn" type="button">
+        <span class="ws-mark">AC</span>
+        <span class="ws-text"><span class="ws-name">Acme Workspace</span><span class="ws-sub">12 members</span></span>
+        <i data-lucide="chevrons-up-down" class="ic"></i>
+      </button>
+
+      <button class="search" id="search-btn" type="button" aria-label="Search folders and files">
+        <i data-lucide="search" class="ic"></i><span>Search</span><kbd>⌘K</kbd>
+      </button>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav-item" type="button" data-soon="Home"><i data-lucide="house" class="ic"></i><span>Home</span></button>
+        <button class="nav-item" type="button" data-soon="Ask AI"><i data-lucide="messages-square" class="ic"></i><span>Ask AI</span></button>
+        <button class="nav-item" type="button" data-soon="Integrations"><i data-lucide="workflow" class="ic"></i><span>Integrations</span><span class="badge">3</span></button>
+        <button class="nav-item" type="button" data-soon="Insights"><i data-lucide="chart-column" class="ic"></i><span>Insights</span></button>
+      </nav>
+
+      <div class="kb-head">
+        <button class="kb-label" id="kb-root" type="button">Knowledge base</button>
+        <button class="icon-btn" id="kb-add" type="button" aria-label="New top-level folder"><i data-lucide="plus" class="ic"></i></button>
+      </div>
+      <ul class="tree" id="tree" role="tree" aria-label="Knowledge base folders"></ul>
+
+      <p class="credit">
+        Sample workspace. Recreated from the
+        <a href="https://x.com/david_visuals_/status/2110699870600515737" target="_blank" rel="noopener">Folders UI concept by David</a>,
+        found on <a href="https://www.inspora.design/posts/folders-ui" target="_blank" rel="noopener">Inspora</a>.
+      </p>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <main class="main" id="main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Open sidebar"><i data-lucide="menu" class="ic"></i></button>
+        <ol class="crumbs" id="crumbs" aria-label="Breadcrumb"></ol>
+        <div class="actions">
+          <button class="btn" id="new-folder" type="button" aria-label="New folder"><i data-lucide="folder-plus" class="ic"></i><span>New folder</span></button>
+          <button class="btn btn-primary" id="upload-btn" type="button" aria-label="Upload files"><i data-lucide="upload" class="ic"></i><span>Upload</span></button>
+          <input type="file" id="upload-input" multiple hidden>
+        </div>
+      </header>
+
+      <div class="content" id="content">
+        <section class="sec" aria-labelledby="h-folders">
+          <div class="sec-head"><h2 id="h-folders">Folders</h2><span class="sec-count" id="folder-count"></span></div>
+          <div class="strip" id="strip" role="list"></div>
+        </section>
+        <section class="sec" aria-labelledby="h-files">
+          <div class="sec-head"><h2 id="h-files">Files</h2><span class="sec-count" id="file-count"></span><span class="hint">Drag a file onto a folder to move it</span></div>
+          <div class="table-wrap">
+            <table class="files">
+              <thead id="thead"></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <div class="drop-veil" id="drop-veil" hidden></div>
+    </main>
+  </div>
+</div>
+
+<div class="palette-scrim" id="palette" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Search the knowledge base">
+    <div class="palette-input">
+      <i data-lucide="search" class="ic"></i>
+      <input id="palette-q" type="text" placeholder="Search folders and files" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="palette-results">
+      <kbd>Esc</kbd>
+    </div>
+    <ul class="results" id="palette-results" role="listbox"></ul>
+    <div class="palette-foot"><span>↑ ↓ to move</span><span>Enter to open</span></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span id="toast-msg"></span>
+  <button type="button" id="toast-undo" hidden>Undo</button>
+</div>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+(() => {
+  // Fixed "now" so the sample data always reads the same ("Updated 2h").
+  const NOW = new Date('2026-10-24T15:00:00').getTime();
+  const H = 3600e3, D = 24 * H, KB = 1024, MB = KB * 1024;
+
+  const PEOPLE = {
+    priya: { email: 'priya.shah@acme.co', initial: 'P', tone: 'brown' },
+    leo:   { email: 'leo.marquez@acme.co', initial: 'L', tone: 'green' },
+    hana:  { email: 'hana.kim@acme.co', initial: 'H', tone: 'purple' },
+    mina:  { email: 'mina.ross@acme.co', initial: 'M', tone: 'teal' },
+    aria:  { email: 'aria.novak@acme.co', initial: 'A', tone: 'blue' },
+    sam:   { email: 'sam.okafor@acme.co', initial: 'S', tone: 'orange' },
+    you:   { email: 'you@acme.co', initial: 'Y', tone: 'blue' },
+  };
+
+  const folders = [
+    { id: 'kb', name: 'Knowledge Base', parent: null },
+    { id: 'general', name: 'General Knowledge', parent: 'kb', color: 'gray', art: 'plain' },
+    { id: 'onboarding', name: 'Onboarding', parent: 'general', color: 'purple', art: 'glass' },
+    { id: 'first-week', name: 'First Week', parent: 'onboarding', color: 'lavender' },
+    { id: 'benefits', name: 'Benefits & Payroll', parent: 'onboarding', color: 'lavender' },
+    { id: 'tools', name: 'Tools & Access', parent: 'onboarding', color: 'lavender' },
+    { id: 'design-system', name: 'Design System', parent: 'general', color: 'periwinkle', art: 'brand', note: 'fonts & colors', tag: 'v2.1' },
+    { id: 'archive', name: 'Archive 2025', parent: 'general', color: 'gray', art: 'zip' },
+    { id: 'documents', name: 'Documents', parent: 'general', color: 'yellow', art: 'docs' },
+    { id: 'integrations', name: 'Integrations', parent: 'general', color: 'gray', art: 'apps' },
+    { id: 'ob-design', name: 'Onboarding Design', parent: 'kb', color: 'blue', art: 'screens' },
+    { id: 'flows', name: 'Flows', parent: 'ob-design', color: 'blue' },
+    { id: 'research', name: 'Research', parent: 'ob-design', color: 'blue' },
+    { id: 'interviews', name: 'Team Interviews', parent: 'kb', color: 'orange', art: 'audio' },
+  ];
+
+  let seq = 0;
+  const f = (name, folder, by, age, size) => ({ id: 'x' + (++seq), name, folder, by, added: NOW - age, size });
+  const files = [
+    f('Welcome-Pack-2026.pdf', 'general', 'priya', 3 * H, 2.4 * MB),
+    f('H2-Strategy-Brief.docx', 'general', 'leo', 1 * D, 840 * KB),
+    f('Employee-Policies.pdf', 'general', 'hana', 2 * D, 1.1 * MB),
+    f('Retention-Report.xlsx', 'general', 'priya', 4 * D, 512 * KB),
+    f('Company-Handbook-v4.pdf', 'general', 'sam', 9 * D, 6.8 * MB),
+    f('Org-Chart-Oct-2026.png', 'general', 'mina', 12 * D, 1.9 * MB),
+
+    f('Day-One-Checklist.pdf', 'onboarding', 'mina', 2 * H, 420 * KB),
+    f('Buddy-Program-Guide.docx', 'onboarding', 'aria', 1 * D, 260 * KB),
+    f('Laptop-Setup.md', 'onboarding', 'aria', 3 * D, 18 * KB),
+    f('Welcome-Call-Recording.mp3', 'onboarding', 'mina', 6 * D, 48 * MB),
+    f('Team-Directory.xlsx', 'onboarding', 'aria', 8 * D, 96 * KB),
+    f('Culture-Deck.pdf', 'onboarding', 'mina', 15 * D, 12.4 * MB),
+    f('Week-One-Schedule.pdf', 'first-week', 'mina', 5 * H, 310 * KB),
+    f('Shadowing-Plan.docx', 'first-week', 'aria', 2 * D, 140 * KB),
+    f('Intro-Meetings.xlsx', 'first-week', 'mina', 4 * D, 64 * KB),
+    f('Office-Map.png', 'first-week', 'aria', 10 * D, 2.2 * MB),
+    f('First-Week-FAQ.md', 'first-week', 'mina', 18 * D, 12 * KB),
+    f('Benefits-Overview-2026.pdf', 'benefits', 'hana', 3 * D, 1.6 * MB),
+    f('Payroll-Calendar.xlsx', 'benefits', 'hana', 7 * D, 88 * KB),
+    f('Pension-Enrollment.pdf', 'benefits', 'priya', 20 * D, 740 * KB),
+    f('Equipment-Allowance.docx', 'benefits', 'hana', 26 * D, 120 * KB),
+    f('Access-Request-Form.pdf', 'tools', 'leo', 1 * D, 210 * KB),
+    f('SSO-Setup-Guide.md', 'tools', 'leo', 5 * D, 22 * KB),
+    f('Tool-Inventory.xlsx', 'tools', 'leo', 11 * D, 150 * KB),
+
+    f('Brand-Guidelines-v2.1.pdf', 'design-system', 'hana', 6 * H, 18.2 * MB),
+    f('Color-Tokens.json', 'design-system', 'leo', 1 * D, 14 * KB),
+    f('Type-Scale.fig', 'design-system', 'hana', 2 * D, 3.4 * MB),
+    f('Logo-Primary.svg', 'design-system', 'sam', 5 * D, 36 * KB),
+    f('Logo-Mono.svg', 'design-system', 'sam', 5 * D + 2 * H, 31 * KB),
+    f('Icon-Set.zip', 'design-system', 'leo', 9 * D, 7.8 * MB),
+    f('Display-Font.zip', 'design-system', 'hana', 14 * D, 2.1 * MB),
+    f('Photo-Direction.pdf', 'design-system', 'sam', 21 * D, 24.5 * MB),
+
+    f('Q4-2025-Board-Pack.zip', 'archive', 'priya', 40 * D, 302 * MB),
+    f('Q3-2025-Board-Pack.zip', 'archive', 'priya', 120 * D, 268 * MB),
+    f('Website-Backup-Jul-2025.zip', 'archive', 'leo', 150 * D, 241 * MB),
+    f('Q2-2025-Board-Pack.zip', 'archive', 'priya', 200 * D, 214 * MB),
+    f('Q1-2025-Board-Pack.zip', 'archive', 'priya', 290 * D, 186 * MB),
+
+    f('Vendor-Contract-Template.docx', 'documents', 'priya', 3 * D, 96 * KB),
+    f('NDA-Mutual.pdf', 'documents', 'priya', 6 * D, 180 * KB),
+    f('Expense-Policy.pdf', 'documents', 'hana', 10 * D, 410 * KB),
+    f('Travel-Policy.pdf', 'documents', 'hana', 16 * D, 380 * KB),
+    f('Security-Overview.pdf', 'documents', 'leo', 25 * D, 2.6 * MB),
+    f('Meeting-Notes-Template.docx', 'documents', 'mina', 33 * D, 44 * KB),
+
+    f('Calendar-Sync-Setup.md', 'integrations', 'leo', 2 * D, 16 * KB),
+    f('Chat-Bot-Commands.md', 'integrations', 'leo', 4 * D, 9 * KB),
+    f('CRM-Field-Mapping.xlsx', 'integrations', 'sam', 8 * D, 120 * KB),
+    f('Webhook-Events.json', 'integrations', 'leo', 13 * D, 28 * KB),
+    f('API-Keys-Policy.pdf', 'integrations', 'hana', 30 * D, 260 * KB),
+
+    f('Onboarding-Flow-v3.fig', 'ob-design', 'aria', 4 * H, 14.6 * MB),
+    f('Empty-States.fig', 'ob-design', 'aria', 3 * D, 6.2 * MB),
+    f('Welcome-Email.png', 'ob-design', 'mina', 6 * D, 880 * KB),
+    f('Signup-Flow.fig', 'flows', 'aria', 1 * D, 4.4 * MB),
+    f('Invite-Flow.fig', 'flows', 'aria', 5 * D, 3.1 * MB),
+    f('Usability-Test-Round-2.pdf', 'research', 'mina', 2 * D, 5.3 * MB),
+    f('Interview-Synthesis.docx', 'research', 'sam', 8 * D, 230 * KB),
+
+    f('Interview-Ops-Lead.mp3', 'interviews', 'sam', 1 * D, 38 * MB),
+    f('Transcripts-October.docx', 'interviews', 'sam', 1 * D + 3 * H, 610 * KB),
+    f('Interview-Design-Lead.mp3', 'interviews', 'sam', 3 * D, 42 * MB),
+    f('Interview-Support-Team.m4a', 'interviews', 'priya', 6 * D, 29 * MB),
+    f('Themes-Summary.pdf', 'interviews', 'priya', 9 * D, 1.2 * MB),
+  ];
+
+  const state = {
+    current: 'general',
+    expanded: new Set(['general', 'onboarding']),
+    sort: { key: 'added', dir: 'desc' },
+    renaming: null,
+    flash: null,
+  };
+
+  const NEW_COLORS = ['teal', 'green', 'pink', 'blue', 'orange', 'yellow'];
+  const WAVE = [10, 18, 26, 14, 30, 22, 12, 24, 34, 20, 14, 28, 18, 10, 22, 30, 16, 12, 24, 18, 10, 20];
+
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const folder = (id) => folders.find((x) => x.id === id);
+  const fileById = (id) => files.find((x) => x.id === id);
+  const children = (id) => folders.filter((x) => x.parent === id);
+  const filesIn = (id) => files.filter((x) => x.folder === id);
+  const subtreeIds = (id) => { const out = [id]; for (const c of children(id)) out.push(...subtreeIds(c.id)); return out; };
+  const allFiles = (id) => { const ids = new Set(subtreeIds(id)); return files.filter((x) => ids.has(x.folder)); };
+  const pathTo = (id) => { const p = []; for (let x = folder(id); x; x = folder(x.parent)) p.unshift(x); return p; };
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+  function fmtSize(b) {
+    if (b >= 1024 * MB) return (b / (1024 * MB)).toFixed(1) + ' GB';
+    if (b >= MB) return (b / MB).toFixed(b >= 100 * MB ? 0 : 1) + ' MB';
+    return Math.max(1, Math.round(b / KB)) + ' KB';
+  }
+  const fmtDay = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+  const fmtDayYear = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const fmtDate = (t) => (new Date(t).getFullYear() === new Date(NOW).getFullYear() ? fmtDay : fmtDayYear).format(t);
+  function updated(list) {
+    if (!list.length) return 'Empty';
+    const diff = NOW - Math.max(...list.map((x) => x.added));
+    if (diff < H) return 'Updated just now';
+    if (diff < D) return `Updated ${Math.round(diff / H)}h`;
+    if (diff < 30 * D) return `Updated ${Math.round(diff / D)}d`;
+    return `Updated ${fmtDate(NOW - diff)}`;
+  }
+  function topPeople(list, n) {
+    const counts = {};
+    for (const x of list) counts[x.by] = (counts[x.by] || 0) + 1;
+    return Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, n).map((k) => PEOPLE[k]);
+  }
+  function fileIcon(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    return ({
+      xlsx: 'file-spreadsheet', csv: 'file-spreadsheet',
+      png: 'file-image', jpg: 'file-image', jpeg: 'file-image', svg: 'file-image', gif: 'file-image', webp: 'file-image',
+      mp3: 'file-audio', m4a: 'file-audio', wav: 'file-audio',
+      zip: 'file-archive', json: 'file-json', fig: 'file-pen-line',
+    })[ext] || 'file-text';
+  }
+  const avatar = (p) => `<span class="av tone-${p.tone}" title="${esc(p.email)}">${p.initial}</span>`;
+  const folderIcon = (color) =>
+    `<svg class="fi" viewBox="0 0 20 16" aria-hidden="true" style="--fc:var(--f-${color})"><path d="M0 2.6A2.6 2.6 0 0 1 2.6 0h4.1c.7 0 1.3.3 1.8.8l1.1 1.2c.3.3.7.5 1.1.5h6.7A2.6 2.6 0 0 1 20 5.1v8.3a2.6 2.6 0 0 1-2.6 2.6H2.6A2.6 2.6 0 0 1 0 13.4z" fill="currentColor" opacity=".55"/><path d="M0 6.2c0-1 .8-1.8 1.8-1.8h16.4c1 0 1.8.8 1.8 1.8v7.2a2.6 2.6 0 0 1-2.6 2.6H2.6A2.6 2.6 0 0 1 0 13.4z" fill="currentColor"/></svg>`;
+  const icons = () => { if (window.lucide) window.lucide.createIcons(); };
+
+  // ---------- folder illustration ----------
+  function art(fd) {
+    const kind = fd.art || 'plain';
+    const list = allFiles(fd.id);
+    const people = topPeople(list, 2);
+    const stack = people.length ? `<span class="stack">${people.map(avatar).join('')}</span>` : '';
+    const pill = `<span class="pill">${updated(list)}</span>`;
+    const paper = (c) => `<span class="paper ${c}"></span>`;
+    let items = '', front = stack + pill;
+    switch (kind) {
+      case 'glass': items = paper('p1') + paper('p2'); break;
+      case 'brand':
+        items = '<span class="chip chip-1"></span><span class="chip-aa">Aa</span><span class="chip chip-2"></span>';
+        front = `<span class="glyph">a</span><span class="rule"></span>${fd.tag ? `<span class="pill pill-top">${esc(fd.tag)}</span>` : ''}`;
+        break;
+      case 'zip':
+        front = `<span class="zip-track"></span><span class="zip-pull"></span><span class="pill pill-dark">ZIP · ${fmtSize(list.reduce((s, x) => s + x.size, 0))}</span>`;
+        break;
+      case 'docs': items = paper('p1') + paper('p2') + '<span class="sticky"></span>'; break;
+      case 'apps': items = '<span class="tile tile-1"></span><span class="tile tile-2"></span><span class="tile tile-3"></span>'; break;
+      case 'screens': items = '<span class="screen screen-1"></span><span class="screen screen-2"></span>'; break;
+      case 'audio': {
+        const rec = list.filter((x) => fileIcon(x.name) === 'file-audio').length;
+        items = '<span class="tape"></span>';
+        front = `<span class="wave">${WAVE.map((h) => `<i style="height:${h}px"></i>`).join('')}</span>${stack}<span class="pill">${plural(rec, 'recording', 'recordings')}</span>`;
+        break;
+      }
+      default: items = paper('p1');
+    }
+    return `<span class="art art-${kind}" style="--fc:var(--f-${fd.color})" aria-hidden="true">
+      <span class="art-shadow"></span><span class="art-back"></span>
+      <span class="art-items">${items}</span>
+      <span class="art-front">${front}</span>
+    </span>`;
+  }
+
+  // ---------- render ----------
+  function treeNode(fd, depth) {
+    const kids = children(fd.id);
+    const open = state.expanded.has(fd.id);
+    const cur = state.current === fd.id;
+    const count = depth > 0 ? `<span class="row-count">${allFiles(fd.id).length}</span>` : '';
+    const twisty = kids.length
+      ? `<button class="twisty" type="button" data-toggle="${fd.id}" aria-expanded="${open}" aria-label="${open ? 'Collapse' : 'Expand'} ${esc(fd.name)}"><i data-lucide="chevron-down" class="ic-sm"></i></button>`
+      : '<span class="twisty leaf"></span>';
+    return `<li role="treeitem"${kids.length ? ` aria-expanded="${open}"` : ''} aria-selected="${cur}">
+      <div class="row${cur ? ' is-current' : ''}" data-drop="${fd.id}">
+        ${twisty}
+        <button class="row-btn" type="button" data-go="${fd.id}"${cur ? ' aria-current="page"' : ''}>${folderIcon(fd.color)}<span class="row-name">${esc(fd.name)}</span>${count}</button>
+      </div>
+      ${kids.length && open ? `<ul role="group">${kids.map((k) => treeNode(k, depth + 1)).join('')}</ul>` : ''}
+    </li>`;
+  }
+
+  function card(fd) {
+    const list = allFiles(fd.id);
+    const subs = children(fd.id).length;
+    const meta = plural(list.length, 'file', 'files') + (subs ? ` · ${plural(subs, 'subfolder', 'subfolders')}` : fd.note ? ` · ${esc(fd.note)}` : '');
+    if (state.renaming === fd.id) {
+      return `<div class="card is-renaming" role="listitem" data-drop="${fd.id}"><div class="card-hit">${art(fd)}
+        <input class="rename" id="rename-input" type="text" value="${esc(fd.name)}" maxlength="60" aria-label="Folder name">
+        <span class="card-meta">${meta}</span></div></div>`;
+    }
+    return `<div class="card" role="listitem" data-drop="${fd.id}">
+      <button class="card-hit" type="button" data-go="${fd.id}" aria-label="Open ${esc(fd.name)}, ${meta}" draggable="false">
+        ${art(fd)}<span class="card-name">${esc(fd.name)}</span><span class="card-meta">${meta}</span>
+      </button></div>`;
+  }
+
+  const COLS = [
+    { key: 'name', label: 'Name', cls: 'c-name' },
+    { key: 'by', label: 'Added by', cls: 'c-by' },
+    { key: 'added', label: 'Date added', cls: 'c-date' },
+    { key: 'size', label: 'Size', cls: 'c-size' },
+  ];
+  function sorter() {
+    const { key, dir } = state.sort;
+    const m = dir === 'asc' ? 1 : -1;
+    return (a, b) => {
+      if (key === 'name') return m * a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+      if (key === 'by') return m * PEOPLE[a.by].email.localeCompare(PEOPLE[b.by].email);
+      return m * (a[key] - b[key]);
+    };
+  }
+
+  function render() {
+    const cur = folder(state.current);
+
+    $('tree').innerHTML = children('kb').map((k) => treeNode(k, 0)).join('');
+
+    const p = pathTo(cur.id), n = p.length;
+    $('crumbs').innerHTML = p.map((x, i) => {
+      const last = i === n - 1;
+      const sep = i ? `<li class="sep${i < n - 1 ? ' far' : ''}" aria-hidden="true"><i data-lucide="chevron-right" class="ic-sm"></i></li>` : '';
+      const body = last
+        ? `<span class="crumb" aria-current="page">${esc(x.name)}</span>`
+        : `<button class="crumb" type="button" data-go="${x.id}">${esc(x.name)}</button>`;
+      return `${sep}<li class="${i < n - 2 ? 'far' : ''}" data-drop="${x.id}">${body}</li>`;
+    }).join('');
+
+    const kids = children(cur.id);
+    $('folder-count').textContent = kids.length || '';
+    $('strip').innerHTML = kids.length
+      ? kids.map(card).join('')
+      : `<p class="empty-note">No folders inside ${esc(cur.name)} yet. Use New folder to add one.</p>`;
+
+    const list = filesIn(cur.id).sort(sorter());
+    $('file-count').textContent = list.length || '';
+    $('thead').innerHTML = `<tr>${COLS.map((c) => {
+      const on = state.sort.key === c.key;
+      const aria = on ? ` aria-sort="${state.sort.dir === 'asc' ? 'ascending' : 'descending'}"` : '';
+      const arrow = on && state.sort.dir === 'asc' ? 'arrow-up' : 'arrow-down';
+      return `<th class="${c.cls}"${aria}><button class="th-btn" type="button" data-sort="${c.key}">${c.label}<i data-lucide="${arrow}" class="ic-sm"></i></button></th>`;
+    }).join('')}</tr>`;
+    $('tbody').innerHTML = list.length
+      ? list.map((x) => {
+        const person = PEOPLE[x.by];
+        return `<tr draggable="true" data-file="${x.id}"${state.flash === x.id ? ' class="flash"' : ''}>
+          <td class="c-name"><span class="name-wrap"><i data-lucide="${fileIcon(x.name)}" class="ic file-ic"></i><span class="name-text" title="${esc(x.name)}">${esc(x.name)}</span></span></td>
+          <td class="c-by"><span class="by">${avatar(person)}<span class="by-email">${esc(person.email)}</span></span></td>
+          <td class="c-date">${fmtDate(x.added)}</td>
+          <td class="c-size">${fmtSize(x.size)}</td>
+        </tr>`;
+      }).join('')
+      : `<tr class="empty"><td colspan="4">No files in ${esc(cur.name)}. Drop files here or use Upload.</td></tr>`;
+
+    icons();
+
+    if (state.renaming) {
+      const input = $('rename-input');
+      if (input) {
+        input.focus();
+        input.select();
+        input.closest('.card').scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    }
+    if (state.flash) {
+      const row = document.querySelector(`tr[data-file="${state.flash}"]`);
+      if (row) row.scrollIntoView({ block: 'center' });
+      state.flash = null;
+    }
+  }
+
+  // ---------- actions ----------
+  function go(id, opts = {}) {
+    state.current = id;
+    for (const x of pathTo(id)) state.expanded.add(x.id);
+    state.renaming = null;
+    state.flash = opts.flash || null;
+    closeNav();
+    render();
+    if (!opts.flash) $('content').scrollTop = 0;
+  }
+
+  function newFolder(parent) {
+    const used = new Set(children(parent).map((x) => x.color));
+    const color = NEW_COLORS.find((c) => !used.has(c)) || NEW_COLORS[0];
+    const id = 'n' + Date.now();
+    folders.push({ id, name: 'Untitled folder', parent, color, art: 'plain' });
+    state.current = parent;
+    for (const x of pathTo(parent)) state.expanded.add(x.id);
+    state.renaming = id;
+    closeNav();
+    render();
+  }
+
+  function commitRename(value) {
+    const fd = folder(state.renaming);
+    if (!fd) return;
+    fd.name = value.trim() || 'Untitled folder';
+    state.renaming = null;
+    render();
+    toast(`Created ${fd.name}`, () => {
+      folders.splice(folders.indexOf(fd), 1);
+      render();
+      toast('Folder removed');
+    });
+  }
+
+  function moveFile(fileId, folderId) {
+    const x = fileById(fileId);
+    const to = folder(folderId);
+    if (!x || !to || x.folder === folderId) return;
+    const from = x.folder;
+    x.folder = folderId;
+    render();
+    toast(`Moved ${x.name} to ${to.name}`, () => { x.folder = from; render(); toast('Move undone'); });
+  }
+
+  function addFiles(list, folderId) {
+    const added = [...list].map((file) => ({ id: 'u' + (++seq), name: file.name, folder: folderId, by: 'you', added: NOW, size: file.size }));
+    if (!added.length) return;
+    files.push(...added);
+    const target = folder(folderId);
+    if (folderId === state.current && added.length === 1) state.flash = added[0].id;
+    render();
+    toast(`Uploaded ${plural(added.length, 'file', 'files')} to ${target.name}`, () => {
+      for (const a of added) files.splice(files.indexOf(a), 1);
+      render();
+      toast('Upload removed');
+    });
+  }
+
+  // ---------- toast ----------
+  let toastTimer = null, undoFn = null;
+  function toast(msg, undo) {
+    const el = $('toast');
+    $('toast-msg').textContent = msg;
+    undoFn = undo || null;
+    $('toast-undo').hidden = !undo;
+    el.hidden = false;
+    el.classList.remove('in');
+    void el.offsetWidth;
+    el.classList.add('in');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 4500);
+  }
+  $('toast-undo').addEventListener('click', () => {
+    const fn = undoFn;
+    undoFn = null;
+    $('toast').hidden = true;
+    if (fn) fn();
+  });
+
+  // ---------- mobile nav ----------
+  const openNav = () => { $('app').classList.add('nav-open'); };
+  const closeNav = () => { $('app').classList.remove('nav-open'); };
+
+  // ---------- search palette ----------
+  let results = [], sel = 0, lastFocus = null;
+  function openPalette() {
+    lastFocus = document.activeElement;
+    $('palette').hidden = false;
+    $('palette-q').value = '';
+    renderResults();
+    $('palette-q').focus();
+  }
+  function closePalette() {
+    $('palette').hidden = true;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function highlight(name, term) {
+    const i = term ? name.toLowerCase().indexOf(term) : -1;
+    if (i < 0) return esc(name);
+    return esc(name.slice(0, i)) + '<mark>' + esc(name.slice(i, i + term.length)) + '</mark>' + esc(name.slice(i + term.length));
+  }
+  const where = (id) => pathTo(id).slice(1).map((x) => x.name).join(' / ') || 'Knowledge Base';
+  function renderResults() {
+    const term = $('palette-q').value.trim().toLowerCase();
+    let groups;
+    if (!term) {
+      groups = [['Recent files', files.slice().sort((a, b) => b.added - a.added).slice(0, 6).map((x) => ({ type: 'file', x }))]];
+    } else {
+      groups = [
+        ['Folders', folders.filter((x) => x.id !== 'kb' && x.name.toLowerCase().includes(term)).slice(0, 5).map((x) => ({ type: 'folder', x }))],
+        ['Files', files.filter((x) => x.name.toLowerCase().includes(term)).slice(0, 8).map((x) => ({ type: 'file', x }))],
+      ];
+    }
+    results = groups.flatMap((g) => g[1]);
+    sel = 0;
+    let i = 0;
+    $('palette-results').innerHTML = results.length
+      ? groups.filter((g) => g[1].length).map(([label, items]) => `<li class="res-group" role="presentation">${label}</li>` + items.map((r) => {
+        const idx = i++;
+        const icon = r.type === 'folder' ? folderIcon(r.x.color) : `<i data-lucide="${fileIcon(r.x.name)}" class="ic file-ic"></i>`;
+        const sub = r.type === 'folder' ? where(r.x.parent) : where(r.x.folder);
+        return `<li class="result" role="option" id="opt-${idx}" data-idx="${idx}" aria-selected="${idx === 0}">${icon}<span class="res-name">${highlight(r.x.name, term)}</span><span class="res-sub">${esc(sub)}</span></li>`;
+      }).join('')).join('')
+      : `<li class="res-empty">Nothing matches “${esc($('palette-q').value.trim())}”. Try a shorter word.</li>`;
+    $('palette-q').setAttribute('aria-activedescendant', results.length ? 'opt-0' : '');
+    icons();
+  }
+  function moveSel(d) {
+    if (!results.length) return;
+    sel = (sel + d + results.length) % results.length;
+    document.querySelectorAll('.result').forEach((el) => el.setAttribute('aria-selected', String(+el.dataset.idx === sel)));
+    const el = $('opt-' + sel);
+    if (el) el.scrollIntoView({ block: 'nearest' });
+    $('palette-q').setAttribute('aria-activedescendant', 'opt-' + sel);
+  }
+  function choose(i) {
+    const r = results[i];
+    if (!r) return;
+    $('palette').hidden = true;
+    if (r.type === 'folder') go(r.x.id);
+    else go(r.x.folder, { flash: r.x.id });
+  }
+  $('palette-q').addEventListener('input', renderResults);
+  $('palette-q').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); moveSel(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moveSel(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); choose(sel); }
+  });
+  $('palette-results').addEventListener('click', (e) => {
+    const li = e.target.closest('.result');
+    if (li) choose(+li.dataset.idx);
+  });
+  $('palette').addEventListener('mousedown', (e) => { if (e.target === $('palette')) closePalette(); });
+
+  // ---------- clicks ----------
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('button, [data-go]');
+    if (!t) return;
+    if (t.dataset.toggle) {
+      const id = t.dataset.toggle;
+      state.expanded.has(id) ? state.expanded.delete(id) : state.expanded.add(id);
+      render();
+      const again = document.querySelector(`[data-toggle="${id}"]`);
+      if (again) again.focus();
+    } else if (t.dataset.go) {
+      go(t.dataset.go);
+    } else if (t.dataset.sort) {
+      const k = t.dataset.sort;
+      state.sort = state.sort.key === k
+        ? { key: k, dir: state.sort.dir === 'asc' ? 'desc' : 'asc' }
+        : { key: k, dir: k === 'name' || k === 'by' ? 'asc' : 'desc' };
+      render();
+      const again = document.querySelector(`[data-sort="${k}"]`);
+      if (again) again.focus();
+    } else if (t.dataset.soon) {
+      toast(`${t.dataset.soon} isn't part of this demo. The knowledge base is fully wired up.`);
+    } else if (t.id === 'ws-btn') {
+      toast('Acme Workspace is the only workspace in this demo.');
+    } else if (t.id === 'kb-root') {
+      go('kb');
+    } else if (t.id === 'kb-add') {
+      newFolder('kb');
+    } else if (t.id === 'new-folder') {
+      newFolder(state.current);
+    } else if (t.id === 'upload-btn') {
+      $('upload-input').click();
+    } else if (t.id === 'search-btn') {
+      openPalette();
+    } else if (t.id === 'menu-btn') {
+      openNav();
+    }
+  });
+  $('scrim').addEventListener('click', closeNav);
+  $('upload-input').addEventListener('change', (e) => {
+    addFiles(e.target.files, state.current);
+    e.target.value = '';
+  });
+
+  // rename input
+  document.addEventListener('keydown', (e) => {
+    if (e.target.id === 'rename-input') {
+      if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); commitRename(e.target.value); }
+    }
+  });
+  document.addEventListener('focusout', (e) => {
+    if (e.target.id === 'rename-input' && state.renaming) commitRename(e.target.value);
+  });
+
+  // keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    const typing = /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      $('palette').hidden ? openPalette() : closePalette();
+    } else if (e.key === '/' && !typing && $('palette').hidden) {
+      e.preventDefault();
+      openPalette();
+    } else if (e.key === 'Escape') {
+      if (!$('palette').hidden) closePalette();
+      else closeNav();
+    }
+  });
+
+  // ---------- drag and drop ----------
+  let dragFile = null, hot = null, osDepth = 0;
+  const hasOsFiles = (e) => !dragFile && e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+  function setHot(el) {
+    if (hot === el) return;
+    if (hot) hot.classList.remove('drop-hot');
+    hot = el;
+    if (hot) hot.classList.add('drop-hot');
+  }
+  function showVeil(folderId) {
+    const v = $('drop-veil');
+    v.hidden = false;
+    v.innerHTML = `Drop to upload to <strong>&nbsp;${esc(folder(folderId).name)}</strong>`;
+  }
+  function endDrag() {
+    setHot(null);
+    $('drop-veil').hidden = true;
+    osDepth = 0;
+    document.querySelectorAll('tr.dragging').forEach((r) => r.classList.remove('dragging'));
+    dragFile = null;
+  }
+  document.addEventListener('dragstart', (e) => {
+    const tr = e.target.closest && e.target.closest('tr[data-file]');
+    if (!tr) return;
+    dragFile = tr.dataset.file;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', fileById(dragFile).name);
+    tr.classList.add('dragging');
+  });
+  document.addEventListener('dragend', endDrag);
+  document.addEventListener('dragenter', (e) => { if (hasOsFiles(e)) osDepth++; });
+  document.addEventListener('dragleave', (e) => {
+    if (hasOsFiles(e) && --osDepth <= 0) endDrag();
+  });
+  document.addEventListener('dragover', (e) => {
+    const target = e.target.closest && e.target.closest('[data-drop]');
+    if (dragFile) {
+      if (target && target.dataset.drop !== fileById(dragFile).folder) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setHot(target);
+      } else setHot(null);
+    } else if (hasOsFiles(e)) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      setHot(target);
+      showVeil(target ? target.dataset.drop : state.current);
+    }
+  });
+  document.addEventListener('drop', (e) => {
+    const target = e.target.closest && e.target.closest('[data-drop]');
+    if (dragFile) {
+      e.preventDefault();
+      if (target) moveFile(dragFile, target.dataset.drop);
+    } else if (e.dataTransfer && e.dataTransfer.files.length) {
+      e.preventDefault();
+      addFiles(e.dataTransfer.files, target ? target.dataset.drop : state.current);
+    }
+    endDrag();
+  });
+
+  render();
+})();
+</script>
